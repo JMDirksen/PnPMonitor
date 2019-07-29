@@ -14,19 +14,32 @@
     
     $monitors = get_monitors($db);
     foreach($monitors as $monitor) {
-        check_monitor($monitor);
+        if(!check_monitor($monitor)) {
+            switch($monitor['type']) {
+                case "page":
+                    $msg = "Page %s failed to load correctly!\n";
+                    printf($msg, $monitor['url']);
+                    break;
+                case "port":
+                    $msg = "Port %s:%d isn't accepting connections!\n";
+                    printf($msg, $monitor['host'], $monitor['port']);
+                    break;
+            }
+        }
     }
 
     function check_monitor($monitor) {
+        $response = false;
         switch($monitor['type']) {
             case 'page':
-                $response = page_load_time($monitor['url']);
+                $response = page_load_time($monitor['url'], $monitor['text']);
                 break;
             case 'port':
                 $response = port_response_time($monitor['host'], $monitor['port']);
                 break;
         }
-        echo "Monitor " . $monitor['id'] . " response time: " . $response . PHP_EOL;
+        if($response !== false) return true;
+        else return false;
     }
 
     function get_monitors($db) {
