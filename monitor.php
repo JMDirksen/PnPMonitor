@@ -3,6 +3,12 @@
     ini_set('display_startup_errors', 1);
     error_reporting(E_ALL);
     
+    use PHPMailer\PHPMailer\PHPMailer;
+    use PHPMailer\PHPMailer\Exception;
+
+    require 'PHPMailer/src/Exception.php';
+    require 'PHPMailer/src/PHPMailer.php';
+    require 'PHPMailer/src/SMTP.php';
     $config = require("config.php");
     
     $db = connect_db(
