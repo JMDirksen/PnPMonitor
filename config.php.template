@@ -4,4 +4,9 @@
         "DB_USER" => "root",
         "DB_PASS" => "",
         "DB_NAME" => "pnpmonitor",
+        "SMTP_HOST" => "smtp.gmail.com",
+        "SMTP_USER" => "username@gmail.com",
+        "SMTP_PASS" => "",
+        "SMTP_FROM" => "username@gmail.com",
+        "SMTP_TO"   => "username@gmail.com",
     );

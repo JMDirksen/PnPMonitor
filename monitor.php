@@ -18,19 +18,50 @@
         $config['DB_NAME']
     );
     
-    $monitors = get_monitors($db);
+    $monitors = get_monitors();
     foreach($monitors as $monitor) {
         if(!check_monitor($monitor)) {
             switch($monitor['type']) {
                 case "page":
-                    $msg = "Page %s failed to load correctly!\n";
-                    printf($msg, $monitor['url']);
+                    $string = "Page %s failed to load correctly!\n";
+                    $msg = sprintf($string, $monitor['url']);
+                    echo $msg;
+                    send_mail($msg);
                     break;
                 case "port":
-                    $msg = "Port %s:%d isn't accepting connections!\n";
-                    printf($msg, $monitor['host'], $monitor['port']);
+                    $string = "Port %s:%d isn't accepting connections!\n";
+                    $msg = sprintf($string, $monitor['host'], $monitor['port']);
+                    send_mail($msg);
+                    echo $msg;
                     break;
             }
+        }
+        else {
+            printf("Monitor %d OK\n",$monitor['id']);
+        }
+    }
+
+    function send_mail($message) {
+        global $config;
+        try {
+            $mail = new PHPMailer(true);
+            //$mail->SMTPDebug = 2;
+            $mail->isSMTP();
+            $mail->SMTPAuth     = true;
+            $mail->Host         = $config['SMTP_HOST'];
+            $mail->Username     = $config['SMTP_USER'];
+            $mail->Password     = $config['SMTP_PASS'];
+            $mail->SMTPSecure   = 'tls';
+            $mail->Port         = 587;
+            
+            $mail->setFrom($config['SMTP_FROM']);
+            $mail->addAddress($config['SMTP_TO']);
+            $mail->Subject = "PnPMonitor failure";
+            $mail->Body = $message;
+            $mail->send();
+        }
+        catch (Exception $e) {
+            echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
         }
     }
 
@@ -48,7 +79,8 @@
         else return false;
     }
 
-    function get_monitors($db) {
+    function get_monitors() {
+        global $db;
         $rows = [];
         $result = $db->query("SELECT * FROM monitor");
         if ($result) {
