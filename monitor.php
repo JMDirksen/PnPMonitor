@@ -25,22 +25,33 @@
                 case "page":
                     $string = "Page %s failed to load correctly!\n";
                     $msg = sprintf($string, $monitor['url']);
-                    echo $msg;
-                    send_mail($msg);
                     break;
                 case "port":
                     $string = "Port %s:%d isn't accepting connections!\n";
                     $msg = sprintf($string, $monitor['host'], $monitor['port']);
-                    send_mail($msg);
-                    echo $msg;
                     break;
+            }
+            echo $msg;
+            if(!$monitor['failed']) {
+                send_mail($msg);
+                monitor_set_failed($monitor['id']);
             }
         }
         else {
             printf("Monitor %d OK\n",$monitor['id']);
+            if($monitor['failed']) {
+                send_mail("Restored");
+                monitor_set_failed($monitor['id'], false);
+            }
         }
     }
 
+    function monitor_set_failed($monitor_id, $failed = true) {
+        global $db;
+        $f = $failed ? 1 : 0;
+        $db->query("UPDATE monitor SET failed = $f WHERE id = $monitor_id");
+    }
+    
     function send_mail($message) {
         global $config;
         try {
