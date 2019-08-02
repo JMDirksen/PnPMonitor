@@ -11,16 +11,16 @@
     require 'PHPMailer/src/SMTP.php';
     $config = require("config.php");
     
-    $db = connect_db(
+    $db = connectDb(
         $config['DB_HOST'],
         $config['DB_USER'],
         $config['DB_PASS'],
         $config['DB_NAME']
     );
     
-    $monitors = get_monitors();
+    $monitors = getMonitors();
     foreach($monitors as $monitor) {
-        if(!check_monitor($monitor)) {
+        if(!checkMonitor($monitor)) {
             switch($monitor['type']) {
                 case "page":
                     $string = "Page %s failed to load correctly!\n";
@@ -33,26 +33,26 @@
             }
             echo $msg;
             if(!$monitor['failed']) {
-                send_mail($msg);
-                monitor_set_failed($monitor['id']);
+                sendMail($msg);
+                setMonitorFailed($monitor['id']);
             }
         }
         else {
             printf("Monitor %d OK\n",$monitor['id']);
             if($monitor['failed']) {
-                send_mail("Restored");
-                monitor_set_failed($monitor['id'], false);
+                sendMail("Restored");
+                setMonitorFailed($monitor['id'], false);
             }
         }
     }
 
-    function monitor_set_failed($monitor_id, $failed = true) {
+    function setMonitorFailed($monitor_id, $failed = true) {
         global $db;
         $f = $failed ? 1 : 0;
         $db->query("UPDATE monitor SET failed = $f WHERE id = $monitor_id");
     }
     
-    function send_mail($message) {
+    function sendMail($message) {
         global $config;
         try {
             $mail = new PHPMailer(true);
@@ -76,21 +76,21 @@
         }
     }
 
-    function check_monitor($monitor) {
+    function checkMonitor($monitor) {
         $response = false;
         switch($monitor['type']) {
             case 'page':
-                $response = page_load_time($monitor['url'], $monitor['text']);
+                $response = getPageLoadTime($monitor['url'], $monitor['text']);
                 break;
             case 'port':
-                $response = port_response_time($monitor['host'], $monitor['port']);
+                $response = getPortResponseTime($monitor['host'], $monitor['port']);
                 break;
         }
         if($response !== false) return true;
         else return false;
     }
 
-    function get_monitors() {
+    function getMonitors() {
         global $db;
         $rows = [];
         $result = $db->query("SELECT * FROM monitor");
@@ -103,13 +103,13 @@
         return $rows;
     }
 
-    function connect_db($host, $user, $pass, $dbname) {
+    function connectDb($host, $user, $pass, $dbname) {
         $db = new mysqli($host, $user, $pass, $dbname);    
         if($db->connect_error) die("DB error: " . $db->connect_error);
         return $db;
     }
     
-    function port_response_time($host, $port) {
+    function getPortResponseTime($host, $port) {
         $time1 = microtime(true);
         $connection = @fsockopen($host, $port, $errno, $errstr, 10);
         $time2 = microtime(true);
@@ -120,7 +120,7 @@
         else return false;
     }
 
-    function page_load_time($url, $must_contain = "") {
+    function getPageLoadTime($url, $must_contain = "") {
         $time1 = microtime(true);
         $page = @file_get_contents($url);
         $time2 = microtime(true);
