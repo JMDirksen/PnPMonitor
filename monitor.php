@@ -14,9 +14,9 @@
     });
 
     $config = Config::getConfig();
+    $ml = new MonitorList();
     
-    $monitors = getMonitors();
-    foreach($monitors as $monitor) {
+    foreach($ml->getMonitors() as $monitor) {
         if(!$monitor->test()) {
             switch($monitor->type) {
                 case "page":
@@ -67,18 +67,3 @@
             echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}\n";
         }
     }
-
-    function getMonitors() {
-        $db = Database::getConnection();
-        $rows = [];
-        $result = $db->query("SELECT id FROM monitor");
-        if ($result) {
-            while ($row = $result->fetch_assoc()) {
-                $rows[] = new Monitor($row['id']);
-            }
-            $result->close();
-        }
-        return $rows;
-    }
-
-
