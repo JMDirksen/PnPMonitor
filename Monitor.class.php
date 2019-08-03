@@ -42,19 +42,19 @@ class Monitor {
         $response = false;
         switch($this->type) {
             case 'page':
-                $response = $this->getPageLoadTime($this->url, $this->text);
+                $response = $this->testPageLoadTime();
                 break;
             case 'port':
-                $response = $this->getPortResponseTime($this->host, $this->port);
+                $response = $this->testPortResponseTime();
                 break;
         }
-        if($response !== false) return true;
-        else return false;
+        if($response === false) return false;
+        else return true;
     }
 
-    private function getPortResponseTime($host, $port) {
+    private function testPortResponseTime() {
         $time1 = microtime(true);
-        $connection = @fsockopen($host, $port, $errno, $errstr, 10);
+        $connection = @fsockopen($this->host, $this->port, $errno, $errstr, 10);
         $time2 = microtime(true);
         if(is_resource($connection)) {
             fclose($connection);
@@ -63,14 +63,14 @@ class Monitor {
         else return false;
     }
 
-    private function getPageLoadTime($url, $must_contain = "") {
+    private function testPageLoadTime() {
         $time1 = microtime(true);
-        $page = @file_get_contents($url);
+        $page = @file_get_contents($this->url);
         $time2 = microtime(true);
-        if(strlen($page) and strlen($must_contain) and stristr($page, $must_contain)===false) {
-            $page = false;
+        if(strlen($page) and strlen($this->text) and stristr($page, $this->text)===false) {
+            return false;
         }
-        if($page) return (int)round(($time2 - $time1)*1000);
+        elseif($page) return (int)round(($time2 - $time1)*1000);
         else return false;
     }
     
