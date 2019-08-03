@@ -2,11 +2,18 @@
 
 class Database {
 
-    private static $db;
+    private static $instance;
     private $connection;
+    private $config;
 
     private function __construct() {
-        $this->connection = new MySQLi(/* credentials */);
+        $this->config = Config::getConfig();
+        $this->connection = new MySQLi(
+            $this->config['DB_HOST'],
+            $this->config['DB_USER'],
+            $this->config['DB_PASS'],
+            $this->config['DB_NAME']
+        );
     }
 
     function __destruct() {
@@ -14,9 +21,9 @@ class Database {
     }
 
     public static function getConnection() {
-        if (self::$db == null) {
-            self::$db = new Database();
+        if (self::$instance == null) {
+            self::$instance = new Database();
         }
-        return self::$db->connection;
+        return self::$instance->connection;
     }
 }
