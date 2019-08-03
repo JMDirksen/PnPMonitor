@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS `monitor` (
   `text` tinytext NOT NULL DEFAULT '',
   `host` tinytext DEFAULT NULL,
   `port` smallint(5) unsigned DEFAULT NULL,
-  `failed` tinyint(1) unsigned NOT NULL,
+  `failed` tinyint(1) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
