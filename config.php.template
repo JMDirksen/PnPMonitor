@@ -9,4 +9,5 @@
         "SMTP_PASS" => "",
         "SMTP_FROM" => "username@gmail.com",
         "SMTP_TO"   => "username@gmail.com",
+        "MAIL_ON_FAILS_COUNT" => 3,
     );

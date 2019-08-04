@@ -9,6 +9,7 @@ class Monitor {
     public $text;
     public $host;
     public $port;
+    public $restored = false;
     private $failed;
 
     public function __construct($id) {
@@ -18,24 +19,6 @@ class Monitor {
 
     public function getFailed() {
         return $this->failed;
-    }
-
-    public function setFailed($failed) {
-        $this->failed = (bool) $failed;
-        $f = $failed ? 1 : 0;
-        $this->db->query("UPDATE monitor SET failed = $f WHERE id = $this->id");
-    }
-
-    private function load($id) {
-        $this->id = $id;
-        $result = $this->db->query("SELECT * FROM monitor WHERE id = $id");
-        $row = $result->fetch_assoc();
-        $this->type = $row['type'];
-        $this->url = $row['url'];
-        $this->text = $row['text'];
-        $this->host = $row['host'];
-        $this->port = $row['port'];
-        $this->failed = $row['failed'] ? true : false;
     }
 
     public function test() {
@@ -48,8 +31,40 @@ class Monitor {
                 $response = $this->testPortResponseTime();
                 break;
         }
-        if($response === false) return false;
-        else return true;
+        if($response === false) {
+            $this->fail();
+            return false;
+        }
+        else {
+            $this->success();
+            return true;
+        }
+    }
+
+    private function setFailed($failed) {
+        $this->failed = $failed;
+        $this->db->query("UPDATE monitor SET failed = $failed WHERE id = $this->id");
+    }
+
+    private function load($id) {
+        $this->id = $id;
+        $result = $this->db->query("SELECT * FROM monitor WHERE id = $id");
+        $row = $result->fetch_assoc();
+        $this->type = $row['type'];
+        $this->url = $row['url'];
+        $this->text = $row['text'];
+        $this->host = $row['host'];
+        $this->port = $row['port'];
+        $this->failed = $row['failed'];
+    }
+
+    private function fail() {
+        $this->setFailed($this->failed+1);
+    }
+
+    private function success() {
+        if($this->failed) $this->restored = true;
+        $this->setFailed(0);
     }
 
     private function testPortResponseTime() {

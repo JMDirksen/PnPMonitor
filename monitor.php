@@ -11,6 +11,8 @@
     $ml = new MonitorList();
     
     foreach($ml->getMonitors() as $monitor) {
+
+        // Failed
         if(!$monitor->test()) {
             switch($monitor->type) {
                 case "page":
@@ -23,18 +25,18 @@
                     break;
             }
             echo $msg;
-            if(!$monitor->getFailed()) {
+            if($monitor->getFailed() == $config['MAIL_ON_FAILS_COUNT']) {
                 $mail = new Mailer();
                 $mail->send("PnPMonitor failure", $msg);
-                $monitor->setFailed(true);
             }
         }
+
+        // Success
         else {
             printf("Monitor %d OK\n",$monitor->id);
-            if($monitor->getFailed()) {
+            if($monitor->restored) {
                 $mail = new Mailer();
                 $mail->send("PnPMonitor restored", "Restored");
-                $monitor->setFailed(false);
             }
         }
     }
