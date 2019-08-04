@@ -10,6 +10,7 @@ class Monitor {
     public $host;
     public $port;
     public $restored = false;
+    public $name;
     private $failed;
 
     public function __construct($id) {
@@ -56,6 +57,19 @@ class Monitor {
         $this->host = $row['host'];
         $this->port = $row['port'];
         $this->failed = $row['failed'];
+        $this->composeName();
+    }
+
+    private function composeName() {
+        switch($this->type) {
+            case 'page':
+                $this->name = $this->url;
+                if($this->text) $this->name .= "($this->text)";
+                break;
+            case 'port':
+                $this->name = "$this->host:$this->port";
+                break;
+        }
     }
 
     private function fail() {

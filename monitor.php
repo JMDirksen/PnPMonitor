@@ -27,16 +27,16 @@
             echo $msg;
             if($monitor->getFailed() == $config['MAIL_ON_FAILS_COUNT']) {
                 $mail = new Mailer();
-                $mail->send("PnPMonitor failure", $msg);
+                $mail->send("PnPMonitor $monitor->name failed", $msg);
             }
         }
 
         // Success
         else {
-            printf("Monitor %d OK\n",$monitor->id);
+            printf("Monitor %s OK\n", $monitor->name);
             if($monitor->restored) {
                 $mail = new Mailer();
-                $mail->send("PnPMonitor restored", "Restored");
+                $mail->send("PnPMonitor $monitor->name restored", "$monitor->name restored");
             }
         }
     }
