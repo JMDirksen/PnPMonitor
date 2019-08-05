@@ -4,7 +4,7 @@ Monitor if a webpage still loads (and optionally contains certain text) or if a 
 Sends an email when a fault is detected.
 
 ## Requirements
-- MySQL Database https://mariadb.org/
+- MariaDB Database https://mariadb.org/
 - PHP (with modules: mysqli, openssl) https://www.php.net/
 - Can run with cron (Linux/webhosting) or Task Scheduler (Windows) or with batch file [run_monitor.cmd](run_monitor.cmd) (Windows)
 
