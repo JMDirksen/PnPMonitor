@@ -1,5 +1,6 @@
 <?php
-    if (php_sapi_name() != "cli") die("monitor.php should be run from command line.");
+    if (php_sapi_name() != "cli")
+        die("monitor.php should be run from command line.");
 
     ini_set('display_errors', 1);
     ini_set('display_startup_errors', 1);
@@ -29,7 +30,7 @@
             echo $msg;
             if($monitor->getFailed() == $config['MAIL_ON_FAILS_COUNT']) {
                 $mail = new Mailer();
-                $mail->send("PnPMonitor $monitor->name failed", $msg);
+                $mail->send("PnPMonitor failed - $monitor->name", $msg);
             }
         }
 
@@ -38,7 +39,8 @@
             printf("Monitor %s OK\n", $monitor->name);
             if($monitor->restored) {
                 $mail = new Mailer();
-                $mail->send("PnPMonitor $monitor->name restored", "$monitor->name restored");
+                $mail->send("PnPMonitor restored - $monitor->name",
+                    "Monitor $monitor->name has been restored\n");
             }
         }
     }

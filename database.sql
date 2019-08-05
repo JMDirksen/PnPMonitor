@@ -6,6 +6,7 @@
 
 CREATE TABLE IF NOT EXISTS `monitor` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` char(15) NOT NULL,
   `type` enum('page','port') NOT NULL,
   `url` tinytext DEFAULT NULL,
   `text` tinytext NOT NULL DEFAULT '',

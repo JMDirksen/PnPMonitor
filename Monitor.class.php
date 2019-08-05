@@ -51,25 +51,13 @@ class Monitor {
         $this->id = $id;
         $result = $this->db->query("SELECT * FROM monitor WHERE id = $id");
         $row = $result->fetch_assoc();
+        $this->name = $row['name'];
         $this->type = $row['type'];
         $this->url = $row['url'];
         $this->text = $row['text'];
         $this->host = $row['host'];
         $this->port = $row['port'];
         $this->failed = $row['failed'];
-        $this->composeName();
-    }
-
-    private function composeName() {
-        switch($this->type) {
-            case 'page':
-                $this->name = $this->url;
-                if($this->text) $this->name .= "($this->text)";
-                break;
-            case 'port':
-                $this->name = "$this->host:$this->port";
-                break;
-        }
     }
 
     private function fail() {
