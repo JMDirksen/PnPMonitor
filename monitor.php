@@ -28,7 +28,7 @@
                     break;
             }
             echo $msg;
-            if($monitor->getFailed() == $config['MAIL_ON_FAILS_COUNT']) {
+            if($monitor->getFailed() == $monitor->sendMailAtXFails) {
                 $mail = new Mailer();
                 $mail->send("PnPMonitor failed - $monitor->name", $msg);
             }

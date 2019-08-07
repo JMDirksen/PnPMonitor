@@ -12,6 +12,7 @@ class Monitor {
     public $restored = false;
     public $name;
     private $failed;
+    public $sendMailAtXFails = 3;
 
     public function __construct($id) {
         $this->db = Database::getConnection();
@@ -65,7 +66,7 @@ class Monitor {
     }
 
     private function success() {
-        if($this->failed) $this->restored = true;
+        if($this->failed >= $this->sendMailAtXFails) $this->restored = true;
         $this->setFailed(0);
     }
 
