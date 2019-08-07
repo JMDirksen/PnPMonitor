@@ -33,30 +33,41 @@ class Database {
 
     private function updateDatabase() {
         $version = $this->getVersion();
-        if($version == 0) {
-            echo "Loading new database...\n";
-            $this->executeSQLFile('database.sql');
+        while($version < self::VERSION) {
+            $updateTo = $version + 1;
+            echo "Updating database version $version to $updateTo ... ";
+            $filename = "database.v" . $updateTo . ".sql";
+            $this->executeSQLFile($filename);
             $version = $this->getVersion();
-            echo "Database $version loaded.\n";
-        }
-        elseif($version < self::VERSION) {
-            echo "Updating database $version...\n";
-            $this->executeSQLFile('database.update.sql');
-            $version = $this->getVersion();
-            echo "Database updated to $version.\n";
+            echo "done.\n";
         }
     }
 
     private function executeSQLFile($filename) {
         $sql = file_get_contents($filename);
-        $this->connection->multi_query($sql);
+        if ($this->connection->multi_query($sql)) {
+            while (true) {
+                if($this->connection->errno) {
+                    die($filename . ": " . $this->connection->error);
+                }
+                elseif($this->connection->more_results()) {
+                    $this->connection->next_result();
+                }
+                else {
+                    break;
+                }
+            }
+        }
+        else {
+            die($filename . ": " . $this->connection->error);
+        }
     }
 
     private function getVersion() {
-        $result = $this->connection->query("SELECT number FROM version LIMIT 1");
+        $result = $this->connection->query("SELECT dbversion FROM settings LIMIT 1");
         if(@$result->num_rows) {
             $row = $result->fetch_assoc();
-            return $row['number'];
+            return $row['dbversion'];
         }
         else return 0;      
     }
