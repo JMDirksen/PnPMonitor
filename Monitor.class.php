@@ -9,9 +9,9 @@ class Monitor {
     public $text;
     public $host;
     public $port;
-    public $restored = false;
     public $name;
-    private $failed;
+    private $failCount;
+    private $successCount;
     public $sendMailAtXFails = 3;
 
     public function __construct($id) {
@@ -19,8 +19,12 @@ class Monitor {
         $this->load($id);
     }
 
-    public function getFailed() {
-        return $this->failed;
+    public function getFailCount() {
+        return $this->failCount;
+    }
+
+    public function getSuccessCount() {
+        return $this->successCount;
     }
 
     public function test() {
@@ -43,11 +47,6 @@ class Monitor {
         }
     }
 
-    private function setFailed($failed) {
-        $this->failed = $failed;
-        $this->db->query("UPDATE monitor SET failed = $failed WHERE id = $this->id");
-    }
-
     private function load($id) {
         $this->id = $id;
         $result = $this->db->query("SELECT * FROM monitor WHERE id = $id");
@@ -58,16 +57,28 @@ class Monitor {
         $this->text = $row['text'];
         $this->host = $row['host'];
         $this->port = $row['port'];
-        $this->failed = $row['failed'];
+        $this->successCount = $row['successCount'];
+        $this->failCount = $row['failCount'];
     }
 
     private function fail() {
-        $this->setFailed($this->failed+1);
+        $this->setFailCount($this->failCount + 1);
+        if($this->successCount) $this->setSuccessCount(0);
     }
 
     private function success() {
-        if($this->failed >= $this->sendMailAtXFails) $this->restored = true;
-        $this->setFailed(0);
+        $this->setSuccessCount($this->successCount + 1);
+        if($this->failCount) $this->setFailCount(0);
+    }
+
+    private function setFailCount($count) {
+        $this->failCount = $count;
+        $this->db->query("UPDATE monitor SET failCount = $count WHERE id = $this->id");
+    }
+
+    private function setSuccessCount($count) {
+        $this->successCount = $count;
+        $this->db->query("UPDATE monitor SET successCount = $count WHERE id = $this->id");
     }
 
     private function testPortResponseTime() {
