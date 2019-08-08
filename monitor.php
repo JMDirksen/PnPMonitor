@@ -7,7 +7,7 @@
     error_reporting(E_ALL);
     
     spl_autoload_register(function ($class_name) {
-        include $class_name . '.class.php';
+        @include $class_name . '.class.php';
     });
 
     $config = Config::getConfig();

@@ -10,18 +10,26 @@ class Database {
 
     private function __construct() {
         $this->config = Config::getConfig();
-        $this->connection = new MySQLi(
-            $this->config['DB_HOST'],
-            $this->config['DB_USER'],
-            $this->config['DB_PASS'],
-            $this->config['DB_NAME']
-        );
+        try {
+            $this->connection = new MySQLi(
+                $this->config['DB_HOST'],
+                $this->config['DB_USER'],
+                $this->config['DB_PASS'],
+                $this->config['DB_NAME']
+            );
+        }
+        catch(Error $e) {
+            die("Error: Unable to load MySQLi.");
+        }
 
         $this->updateDatabase();
     }
 
     function __destruct() {
-        $this->connection->close();
+        try {
+            $this->connection->close();
+        }
+        catch(Error $e) {}
     }
 
     public static function getConnection() {
