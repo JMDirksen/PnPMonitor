@@ -2,7 +2,7 @@
 
 class Database {
 
-    const VERSION = 2;
+    const VERSION = 3;
 
     private static $instance;
     private $connection;
