@@ -4,5 +4,7 @@ CREATE TABLE `users` (
 	`token` CHAR(32) NOT NULL,
 	PRIMARY KEY (`id`)
 );
+ALTER TABLE `users` ADD UNIQUE (`email`);
+ALTER TABLE `users` ADD UNIQUE (`token`);
 
 UPDATE settings SET dbversion = 3;
