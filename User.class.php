@@ -2,8 +2,9 @@
 
 class User {
     private $db;
-    private $email;
-    private $token;
+    public $id;
+    public $email;
+    public $token;
 
     public function __construct() {
         $this->db = Database::getConnection();
@@ -24,6 +25,34 @@ class User {
         $this->db->query("INSERT INTO users (email, token) VALUES ('$this->email', '$this->token')");
         if($this->db->errno) {
             die($this->db->error);
+        }
+    }
+
+    public function loadFromToken($token) {
+        $result = $this->db->query("SELECT id FROM users WHERE token = '$token'");
+        if($result->num_rows) {
+            $row = $result->fetch_assoc();
+            $id = $row['id'];
+        }
+        $this->load($id);
+    }
+
+    public function loadFromEmail($email) {
+        $result = $this->db->query("SELECT id FROM users WHERE email = '$email'");
+        if($result->num_rows) {
+            $row = $result->fetch_assoc();
+            $id = $row['id'];
+        }
+        $this->load($id);
+    }
+
+    public function load($userid) {
+        $result = $this->db->query("SELECT * FROM users WHERE id = $userid");
+        if($result->num_rows) {
+            $row = $result->fetch_assoc();
+            $this->id = $row['id'];
+            $this->email = $row['email'];
+            $this->token = $row['token'];
         }
     }
 

@@ -31,6 +31,7 @@
             if($monitor->getFailCount() == $monitor->sendMailAtXFails) {
                 $mail = new Mailer();
                 $mail->send("PnPMonitor failed - $monitor->name", $msg);
+                echo "Mail sent.\n";
             }
         }
 
@@ -41,6 +42,7 @@
                 $mail = new Mailer();
                 $mail->send("PnPMonitor restored - $monitor->name",
                     "Monitor $monitor->name has been restored\n");
+                echo "Mail sent.\n";
             }
         }
     }
