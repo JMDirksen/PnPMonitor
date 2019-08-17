@@ -7,7 +7,7 @@ class Config {
 
     private function __construct() {
         $this->config = @include "config.php";
-        if($this->config === false) die("Error loading config.php");
+        if($this->config === false) die("Error loading config.php\n");
     }
 
     public static function getConfig() {
