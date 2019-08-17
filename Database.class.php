@@ -19,7 +19,7 @@ class Database {
             );
         }
         catch(Error $e) {
-            die("Error: Unable to load MySQLi.");
+            die("Error: Unable to load MySQLi.\n");
         }
 
         $this->updateDatabase();
