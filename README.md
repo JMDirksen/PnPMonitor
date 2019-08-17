@@ -38,4 +38,7 @@ mysql --user=pnpmonitor --password=password
   INSERT INTO monitor (name, type, url) VALUES ('Google', 'page', 'http://www.google.nl');
   exit
 php monitor.php
+
+crontab -e
+  * * * * * /usr/bin/php ~/PnPMonitor/monitor.php > /dev/null
 ```
