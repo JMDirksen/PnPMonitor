@@ -14,6 +14,7 @@
     $ml = new MonitorList();
     
     foreach($ml->getMonitors() as $monitor) {
+        $mailSent = $monitor->getFailCount() >= $monitor->sendMailAtXFails;
 
         // Failed
         if(!$monitor->test()) {
@@ -38,7 +39,7 @@
         // Success
         else {
             printf("Monitor %s OK\n", $monitor->name);
-            if($monitor->getSuccessCount() == 1) {
+            if($monitor->getSuccessCount() == 1 && $mailSent) {
                 $mail = new Mailer();
                 $mail->send("PnPMonitor restored - $monitor->name",
                     "Monitor $monitor->name has been restored\n");
