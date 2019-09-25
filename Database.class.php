@@ -52,7 +52,7 @@ class Database {
     }
 
     private function executeSQLFile($filename) {
-        $sql = file_get_contents($filename);
+        $sql = file_get_contents(__DIR__.'/'.$filename);
         if ($this->connection->multi_query($sql)) {
             while (true) {
                 if($this->connection->errno) {
