@@ -30,7 +30,6 @@ class Mailer {
             $this->mail->Subject = $subject;
             $this->mail->Body = $body;
             $this->mail->send();
-            echo "Mail sent.\n";
         }
         catch (Exception $e) {
             echo "Message could not be sent. Mailer Error: {$this->mail->ErrorInfo}\n";
