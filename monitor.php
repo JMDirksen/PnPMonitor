@@ -28,7 +28,6 @@
                     $msg = sprintf($string, $monitor->host, $monitor->port);
                     break;
             }
-            echo $msg;
             if($monitor->getFailCount() == $monitor->sendMailAtXFails) {
                 $mail = new Mailer();
                 $mail->send("PnPMonitor failed - $monitor->name", $msg);
@@ -37,7 +36,6 @@
 
         // Success
         else {
-            printf("Monitor %s OK\n", $monitor->name);
             if($monitor->getSuccessCount() == 1 && $mailSent) {
                 $mail = new Mailer();
                 $mail->send("PnPMonitor restored - $monitor->name",
