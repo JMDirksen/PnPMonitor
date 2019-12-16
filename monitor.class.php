@@ -1,9 +1,6 @@
 <?php
 
 class Monitor {
-    private $db;
-
-    public $id;
     public $type;
     public $url;
     public $text;
@@ -14,9 +11,8 @@ class Monitor {
     private $successCount;
     public $sendMailAtXFails = 3;
 
-    public function __construct($id) {
-        $this->db = Database::getConnection();
-        $this->load($id);
+    public function __construct($type = "test") {
+      $this->type = $type;
     }
 
     public function getFailCount() {
