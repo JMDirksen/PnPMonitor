@@ -1,9 +1,6 @@
 <?php
     return array(
-        "DB_HOST" => "localhost",
-        "DB_USER" => "pnpmonitor",
-        "DB_PASS" => "",
-        "DB_NAME" => "pnpmonitor",
+        "DB_FILE" => "db.json",
         "SMTP_HOST" => "smtp.gmail.com",
         "SMTP_USER" => "username@gmail.com",
         "SMTP_PASS" => "",
