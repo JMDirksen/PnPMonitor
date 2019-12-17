@@ -57,10 +57,16 @@
     }
 
     function testMonitor($monitor) {
-        if($monitor->type == "page")
-            return testPageLoadTime($monitor);
-        elseif($monitor->type == "port")
-            return testPortResponseTime($monitor);
+        switch($monitor->type) {
+            case "page":
+                return testPageLoadTime($monitor);
+                break;
+            case "port":
+                return testPortResponseTime($monitor);
+                break;
+            default:
+                return false;
+        }
     }
 
     function testPortResponseTime($portMonitor) {
