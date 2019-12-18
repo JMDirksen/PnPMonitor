@@ -1,6 +1,10 @@
 <?php
+    use PHPMailer\PHPMailer\PHPMailer;
+    
+    if(!extension_loaded("openssl")) die("Error: Extension openssl required.");
+    
     if(php_sapi_name() != "cli")
-        die("monitor.php should be run from command line.");
+        die("This script should be run from command line.");
 
     ini_set("display_errors", 1);
     ini_set("display_startup_errors", 1);
@@ -10,7 +14,6 @@
 
     $db = loadDb($config['DB_FILE']);
 
-    // Check db
     if(!isset($db->sendMailAtXFails)) $db->sendMailAtXFails = 3;
     if(!isset($db->sendMailAtXSuccesses)) $db->sendMailAtXSuccesses = 2;
     if(!isset($db->monitors)) $db->monitors = [];
@@ -19,9 +22,9 @@
     //$db->monitors = [];
     //addMonitor($db, portMonitor("GooglePort", "google.nl", 80));
     //addMonitor($db, pageMonitor("GooglePage", "http://www.google.nl", "zoeken"));
+    //sendMail($config, "Test mail", "Test message!\nLine 2");
 
     foreach($db->monitors as $key => $monitor) {
-        // Check monitor
         if(!isset($monitor->failing)) $monitor->failing = false;
         if(!isset($monitor->successCount)) $monitor->successCount = 0;
         if(!isset($monitor->failCount)) $monitor->failCount = 0;
@@ -46,8 +49,8 @@
             }
             if($monitor->failCount >= $db->sendMailAtXFails && !$monitor->failing) {
                 $monitor->failing = true;
-                //$mail = new Mailer();
-                //$mail->send("PnPMonitor failed - $monitor->name", $msg);
+                $subject = "PnPMonitor failed - $monitor->name";
+                sendMail($config, $subject, $msg);
                 echo "Mail sent.\n";
             }
         }
@@ -56,9 +59,9 @@
             if($monitor->successCount >= $db->sendMailAtXSuccesses && $monitor->failing) {
                 $monitor->failing = false;
                 $monitor->failCount = 0;
-                //$mail = new Mailer();
-                //$mail->send("PnPMonitor restored - $monitor->name",
-                //    "Monitor $monitor->name has been restored\n");
+                $subject = "PnPMonitor restored - $monitor->name";
+                $body = "Monitor $monitor->name has been restored.\n";
+                sendMail($config, $subject, $body);
                 echo "Mail sent.\n";
             }
         }
@@ -145,4 +148,28 @@
         }
         elseif($page) return (int)round(($time2 - $time1)*1000);
         else return false;
+    }
+
+    function sendMail(&$config, $subject, $body) {
+        require_once 'PHPMailer/src/Exception.php';
+        require_once 'PHPMailer/src/PHPMailer.php';
+        require_once 'PHPMailer/src/SMTP.php';
+        try {
+            $mailer = new PHPMailer(true);
+            $mailer->isSMTP();
+            $mailer->SMTPAuth   = true;
+            $mailer->Host       = $config['SMTP_HOST'];
+            $mailer->Username   = $config['SMTP_USER'];
+            $mailer->Password   = $config['SMTP_PASS'];
+            $mailer->SMTPSecure = $config['SMTP_SECURE'];
+            $mailer->Port       = $config['SMTP_PORT'];
+            $mailer->setFrom($config['SMTP_FROM']);
+            $mailer->addAddress($config['SMTP_TO']);
+            $mailer->Subject = $subject;
+            $mailer->Body = $body;
+            $mailer->send();
+        }
+        catch (Exception $e) {
+            echo "Message could not be sent. Mailer Error: {$mailer->ErrorInfo}";
+        }
     }
