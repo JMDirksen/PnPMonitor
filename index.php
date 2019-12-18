@@ -1,41 +1,42 @@
 <?php
-    session_start();
+    // Init
+    ini_set("display_errors", 1);
+    ini_set("display_startup_errors", 1);
+    error_reporting(E_ALL);
 
-    spl_autoload_register(function ($class_name) {
-        @include $class_name . '.class.php';
-    });
+    // Load required files
+    require_once("functions.php");
+    $config = require_once('config.php');
+
+    // Load database
+    $db = loadDb($config['DB_FILE']);
+
+    // Setup database
+    if(!isset($db->users)) $db->users = [];
+
+    session_start();
 
     if(isset($_POST['emailForm'])) {
         $email = $_POST['email'];
-        if(User::existingUser($email)) {
-            $user = new User();
-            $user->loadFromEmail($email);
-            $protocol = ($_SERVER['HTTPS']=="on") ? "https://" : "http://";
-            $host = $_SERVER['HTTP_HOST'];
-            $link = $protocol.$host."/?token=".$user->token;
-            $mailer = new Mailer();
-            $mailer->send("PnPMonitor Login Link", $link);
+        $user = getUser($db, $email);
+        if(!$user) {
+            $user = (object) null;
+            $user->email = $email;
         }
-        else {
-            $user = new User();
-            $user->setEmail($email);
-            $user->generateToken();
-            $user->save();
-            $protocol = ($_SERVER['HTTPS']=="on") ? "https://" : "http://";
-            $host = $_SERVER['HTTP_HOST'];
-            $link = $protocol.$host."/?token=".$user->token;
-            $mailer = new Mailer();
-            $mailer->send("PnPMonitor Login Link", $link);
-        }
-        die("An e-mail has been sent with your login link.");
+        $user->token = newToken();
+        updateUser($db, $user);
+        sendMail($config, "PnPMonitor Login Link", tokenLink($user->token));
+        echo "An e-mail has been sent with your login link.\n";
     }
 
     if(isset($_GET['token'])) {
         $token = $_GET['token'];
-        $user = new User();
-        $user->loadFromToken($token);
-        die($user->id." ".$user->email);
+        $user = getUserFromToken($db, $token);
+        die("User: ".$user->email);
     }
+
+    // Save database
+    saveDb($db, $config['DB_FILE']);
 
     $body = '<form method="post">'
     .'<input type="email" name="email" placeholder="email" required>'

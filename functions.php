@@ -81,7 +81,7 @@
         require_once 'PHPMailer/src/PHPMailer.php';
         require_once 'PHPMailer/src/SMTP.php';
         try {
-            $mailer = new PHPMailer(true);
+            $mailer = new PHPMailer\PHPMailer\PHPMailer(true);
             $mailer->isSMTP();
             $mailer->SMTPAuth   = true;
             $mailer->Host       = $config['SMTP_HOST'];
@@ -96,6 +96,47 @@
             $mailer->send();
         }
         catch (Exception $e) {
-            echo "Message could not be sent. Mailer Error: {$mailer->ErrorInfo}";
+            echo "Message could not be sent. Error: {$mailer->ErrorInfo}";
         }
+    }
+
+    function getUser(&$db, $email) {
+        foreach($db->users as $user) {
+            if($user->email == $email) return $user;
+        }
+        return false;
+    }
+
+    function getUserFromToken(&$db, $token) {
+        foreach($db->users as $user) {
+            if($user->token == $token) return $user;
+        }
+        return false;
+    }
+
+    function newToken($length = 32) {
+        $token = "";
+        $chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        for($i = 0; $i < $length; $i++) {
+            $rnd = rand(0,strlen($chars)-1);
+            $char = $chars{$rnd};
+            $token .= $char;
+        }
+        return $token;
+    }
+
+    function tokenLink($token) {
+        $protocol = ($_SERVER['HTTPS']=="on") ? "https://" : "http://";
+        $host = $_SERVER['HTTP_HOST'];
+        return $protocol.$host."/?token=".$token;
+    }
+
+    function updateUser(&$db, $user) {
+        foreach($db->users as $key => $value) {
+            if($value->email == $user->email) {
+                $db->users[$key] = $user;
+                return;
+            }
+        }
+        $db->users[] = $user;
     }
