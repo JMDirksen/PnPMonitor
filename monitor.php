@@ -31,9 +31,7 @@
         if(!isset($monitor->failCount)) $monitor->failCount = 0;
         
         // Test monitor
-        echo "Monitor: ".$monitor->name.PHP_EOL;
         $result = testMonitor($monitor);
-        echo "Result: ".$result.PHP_EOL;
         $monitor->lastResult = $result;
         
         // Process result
@@ -55,7 +53,6 @@
                 $monitor->failing = true;
                 $subject = "PnPMonitor failed - $monitor->name";
                 sendMail($config, $subject, $msg);
-                echo "Mail sent.\n";
             }
         }
         else {
@@ -67,7 +64,6 @@
                 $subject = "PnPMonitor restored - $monitor->name";
                 $body = "Monitor $monitor->name has been restored.\n";
                 sendMail($config, $subject, $body);
-                echo "Mail sent.\n";
             }
         }
         
