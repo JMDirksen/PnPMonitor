@@ -1,12 +1,21 @@
 <?php
     function loadDb($dbFile) {
-        $db = json_decode(@file_get_contents($dbFile));
+        $handle = fopen($dbFile, "c+");
+        if(!$handle) die("Unable to open db");
+        if(!flock($handle, LOCK_EX)) die("Unable to lock db");
+        $contents = "";
+        if(filesize($dbFile)) {
+            $contents = fread($handle, filesize($dbFile));
+            if($contents === false) die("Unable to read db");
+        }
+        $db = json_decode($contents);
         if(!$db) $db = (object) null;
-        return $db;
+        return array($db, $handle);
     }
 
-    function saveDb(&$db, $dbFile) {
-        file_put_contents($dbFile, json_encode($db));
+    function saveDb(&$db, $handle) {
+        if(!ftruncate($handle, 0)) die("Unable to truncate db");
+        if(fwrite($handle, json_encode($db)) === false) die("Unable to write db");
     }
 
     function pageMonitor($name, $url, $text = "") {

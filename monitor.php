@@ -16,7 +16,7 @@
         die("Error: Extension openssl required.");
 
     // Load database
-    $db = loadDb($config['DB_FILE']);
+    list($db, $handle) = loadDb($config['DB_FILE']);
 
     // Setup database
     if(!isset($db->sendMailAtXFails)) $db->sendMailAtXFails = 3;
@@ -72,4 +72,4 @@
     }
 
     // Save database
-    saveDb($db, $config['DB_FILE']);
+    saveDb($db, $handle);

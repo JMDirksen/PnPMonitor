@@ -9,7 +9,7 @@
     $config = require_once('config.php');
 
     // Load database
-    $db = loadDb($config['DB_FILE']);
+    list($db, $handle) = loadDb($config['DB_FILE']);
 
     // Setup database
     if(!isset($db->users)) $db->users = [];
@@ -36,7 +36,7 @@
     }
 
     // Save database
-    saveDb($db, $config['DB_FILE']);
+    saveDb($db, $handle);
 
     $body = '<form method="post">'
     .'<input type="email" name="email" placeholder="email" required>'
