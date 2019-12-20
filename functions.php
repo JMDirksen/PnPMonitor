@@ -15,6 +15,7 @@
 
     function saveDb(&$db, $handle) {
         if(!ftruncate($handle, 0)) die("Unable to truncate db");
+        if(!rewind($handle)) die("Unable to rewind db");
         if(fwrite($handle, json_encode($db)) === false) die("Unable to write db");
     }
 
