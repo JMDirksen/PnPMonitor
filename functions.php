@@ -150,3 +150,15 @@
         }
         $db->users[] = $user;
     }
+
+    function thisUrl() {
+        $protocol = ($_SERVER['HTTPS']=="on") ? "https://" : "http://";
+        $host = $_SERVER['HTTP_HOST'];
+        return $protocol.$host."/";
+    }
+
+    function redirect($url = "") {
+        if(empty($url)) $url = thisUrl();
+        header("Location: $url", true, 303);
+        die();
+    }
