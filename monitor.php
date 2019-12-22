@@ -17,7 +17,7 @@ if(!extension_loaded("openssl"))
     die("Error: Extension openssl required.");
 
 // Load database
-list($db, $handle) = loadDb($config['DB_FILE']);
+list($db, $handle) = loadDb();
 
 // Setup database
 if(!isset($db->sendMailAtXFails)) $db->sendMailAtXFails = 3;
@@ -53,7 +53,7 @@ foreach($db->monitors as $key => $monitor) {
         if($monitor->failCount >= $db->sendMailAtXFails && !$monitor->failing) {
             $monitor->failing = true;
             $subject = "PnPMonitor failed - $monitor->name";
-            sendMail($config, $subject, $msg);
+            sendMail($subject, $msg);
         }
     }
     else {
@@ -64,7 +64,7 @@ foreach($db->monitors as $key => $monitor) {
             $monitor->failCount = 0;
             $subject = "PnPMonitor restored - $monitor->name";
             $body = "Monitor $monitor->name has been restored.\n";
-            sendMail($config, $subject, $body);
+            sendMail($subject, $body);
         }
     }
     
@@ -73,4 +73,4 @@ foreach($db->monitors as $key => $monitor) {
 }
 
 // Save database
-saveDb($db, $handle);
+saveDb();

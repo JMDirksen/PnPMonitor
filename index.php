@@ -11,7 +11,7 @@ require_once("functions.php");
 $config = require_once('config.php');
 
 // Load/Setup database
-list($db, $handle) = loadDb($config['DB_FILE']);
+list($db, $dbhandle) = loadDb();
 if(!isset($db->users)) $db->users = [];
 
 
@@ -37,28 +37,28 @@ if(isset($_POST['registerForm'])) {
         redirect(thisUrl()."?register");
     }
 
-    $user = getUser($db, $email);
+    $user = getUser($email);
     if($user) {
         $_SESSION['msg'] = "A user with this email already exists";
         redirect(thisUrl()."?register");
     }
     
     $user = (object) null;
-    $user->id = newUserId($db);
+    $user->id = newUserId();
     $user->email = $email;
     $user->password = password_hash($password, PASSWORD_DEFAULT);
     $user->confirm = newSecret();
     updateUser($user);
-    sendMail($config, "PnPMonitor email confirmation", confirmLink($user->confirm));
-    saveDb($db, $handle);
+    sendMail("PnPMonitor email confirmation", confirmLink($user->confirm));
+    saveDb();
     $_SESSION['msg'] = "An email has been sent for confirmation";
     redirect();
 }
 
 // Handle: Resend confirmation code
 if(isset($_GET['resend'])) {
-    $user = getUser($db, $_SESSION['email']);
-    sendMail($config, "PnPMonitor email confirmation", confirmLink($user->confirm));
+    $user = getUser($_SESSION['email']);
+    sendMail("PnPMonitor email confirmation", confirmLink($user->confirm));
     $_SESSION['msg'] = "An email has been sent for confirmation";
     redirect();
 }
@@ -66,7 +66,8 @@ if(isset($_GET['resend'])) {
 // Handle: Confirm
 if(isset($_GET['confirm'])) {
     confirm($_GET['confirm']);
-    saveDb($db, $handle);
+    saveDb();
+    $_SESSION['msg'] = "Email has been confirmed";
     redirect();
 }
 
@@ -75,7 +76,7 @@ if(isset($_POST['loginForm'])) {
     $email = $_POST['email'];
     $password = $_POST['password'];
     $_SESSION["email"] = $email;
-    $user = verifyLogin($db, $email, $password);
+    $user = verifyLogin($email, $password);
     if(!$user) {
         $_SESSION['msg'] = "Incorrect username or password";
         redirect();

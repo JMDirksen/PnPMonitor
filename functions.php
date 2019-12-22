@@ -1,5 +1,7 @@
 <?php
-    function loadDb($dbFile) {
+    function loadDb() {
+        global $config;
+        $dbFile = $config['DB_FILE'];
         $handle = fopen($dbFile, "c+");
         if(!$handle) die("Unable to open db");
         if(!flock($handle, LOCK_EX)) die("Unable to lock db");
@@ -13,10 +15,11 @@
         return array($db, $handle);
     }
 
-    function saveDb(&$db, $handle) {
-        if(!ftruncate($handle, 0)) die("Unable to truncate db");
-        if(!rewind($handle)) die("Unable to rewind db");
-        if(fwrite($handle, json_encode($db)) === false) die("Unable to write db");
+    function saveDb() {
+        global $db, $dbhandle;
+        if(!ftruncate($dbhandle, 0)) die("Unable to truncate db");
+        if(!rewind($dbhandle)) die("Unable to rewind db");
+        if(fwrite($dbhandle, json_encode($db)) === false) die("Unable to write db");
     }
 
     function pageMonitor($name, $url, $text = "") {
@@ -37,7 +40,8 @@
         );
     }
 
-    function addMonitor(&$db, $monitor) {
+    function addMonitor($monitor) {
+        global $db;
         $db->monitors[] = $monitor;
     }
 
@@ -86,7 +90,8 @@
         else return false;
     }
 
-    function sendMail(&$config, $subject, $body) {
+    function sendMail($subject, $body) {
+        global $config;
         require_once 'PHPMailer/src/Exception.php';
         require_once 'PHPMailer/src/PHPMailer.php';
         require_once 'PHPMailer/src/SMTP.php';
@@ -110,14 +115,16 @@
         }
     }
 
-    function getUser(&$db, $email) {
+    function getUser($email) {
+        global $db;
         foreach($db->users as $user) {
             if($user->email == $email) return $user;
         }
         return false;
     }
 
-    function getUserFromToken(&$db, $token) {
+    function getUserFromToken($token) {
+        global $db;
         foreach($db->users as $user) {
             if($user->token == $token) return $user;
         }
@@ -152,13 +159,15 @@
         $db->users[] = $user;
     }
 
-    function newUserId(&$db) {
+    function newUserId() {
+        global $db;
         $id = 1;
         foreach($db->users as $user) if($user->id >= $id) $id = $user->id+1;
         return $id;
     }
 
-    function verifyLogin(&$db, $email, $password) {
+    function verifyLogin($email, $password) {
+        global $db;
         foreach($db->users as $user) {
             if($user->email == $email) {
                 if(password_verify($password, $user->password)) {
