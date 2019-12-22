@@ -10,10 +10,8 @@ session_start();
 require_once("functions.php");
 $config = require_once('config.php');
 
-// Load/Setup database
+// Load database
 list($db, $dbhandle) = loadDb();
-if(!isset($db->users)) $db->users = [];
-
 
 // Handle: Register
 if(isset($_POST['registerForm'])) {
@@ -48,9 +46,9 @@ if(isset($_POST['registerForm'])) {
     $user->email = $email;
     $user->password = password_hash($password, PASSWORD_DEFAULT);
     $user->confirm = newSecret();
-    updateUser($user);
-    sendMail("PnPMonitor email confirmation", confirmLink($user->confirm));
+    $db->users[] = $user;
     saveDb();
+    sendMail("PnPMonitor email confirmation", confirmLink($user->confirm));
     $_SESSION['msg'] = "An email has been sent for confirmation";
     redirect();
 }
@@ -103,6 +101,34 @@ if(isset($_POST['addPage']) or isset($_POST['addPort'])) {
     redirect();
 }
 
+// Handle: Edit monitor
+if(isset($_POST['editPage']) or isset($_POST['editPort'])) {
+    $monitor = getMonitor($_POST['id']);
+    if(!isset($_SESSION['id'])) redirect();
+    if($monitor->user <> $_SESSION['id']) redirect();
+    
+    $monitor->name = $_POST['name'];
+    if(isset($_POST['editPage'])) {
+        $monitor->url = $_POST['url'];
+        $monitor->text = $_POST['text'];
+    }
+    else {
+        $monitor->host = $_POST['host'];
+        $monitor->port = $_POST['port'];
+    }
+    updateMonitor($monitor);
+    saveDb();
+    redirect();
+}
+
+if(isset($_POST['deleteMonitor'])) {
+    $monitor = getMonitor($_POST['id']);
+    if(!$monitor->user == $_SESSION['id']) redirect();
+    deleteMonitor($monitor);
+    saveDb();
+    redirect();
+}
+
 // Handle: Logout
 if(isset($_GET['logout'])) {
     unset($_SESSION['id']);
@@ -131,6 +157,34 @@ if(isset($_GET['register'])) {
 
 // Monitors form
 elseif(isset($_SESSION['id'])) {
+    // Monitors list
+    foreach($db->monitors as $monitor) {
+        if($monitor->user == $_SESSION['id']) {
+            if($monitor->type == "page") {
+                echo '<form method="post">';
+                echo '<input type="hidden" name="id" value="'.$monitor->id.'">';
+                echo '<input type="hidden" name="type" value="page">';
+                echo '<input type="text" name="name" value="'.$monitor->name.'" placeholder="name" required>';
+                echo '<input type="text" name="url" value="'.$monitor->url.'" placeholder="http(s)://" required>';
+                echo '<input type="text" name="text" value="'.$monitor->text.'" placeholder="text">';
+                echo '<input type="submit" name="editPage" value="Save Page Monitor">';
+                echo '<input type="submit" name="deleteMonitor" value="X">';
+                echo '</form>';
+            }
+            else {
+                echo '<form method="post">';
+                echo '<input type="hidden" name="id" value="'.$monitor->id.'">';
+                echo '<input type="hidden" name="type" value="port">';
+                echo '<input type="text" name="name" value="'.$monitor->name.'" placeholder="name" required>';
+                echo '<input type="text" name="host" value="'.$monitor->host.'" placeholder="host" required>';
+                echo '<input type="text" name="port" value="'.$monitor->port.'" placeholder="port" required>';
+                echo '<input type="submit" name="editPort" value="Save Port Monitor">';
+                echo '<input type="submit" name="deleteMonitor" value="X">';
+                echo '</form>';
+            }
+        }        
+    }
+
     // Add Page monitor form
     echo '<form method="post">';
     echo '<input type="hidden" name="type" value="page">';

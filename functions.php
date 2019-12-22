@@ -12,6 +12,10 @@
         }
         $db = json_decode($contents);
         if(!$db) $db = (object) null;
+        if(!isset($db->users)) $db->users = [];
+        if(!isset($db->monitors)) $db->monitors = [];
+        if(!isset($db->sendMailAtXFails)) $db->sendMailAtXFails = 3;
+        if(!isset($db->sendMailAtXSuccesses)) $db->sendMailAtXSuccesses = 2;
         return array($db, $handle);
     }
 
@@ -125,6 +129,14 @@
         }
         return false;
     }
+    
+    function getMonitor($id) {
+        global $db;
+        foreach($db->monitors as $monitor) {
+            if($monitor->id == $id) return $monitor;
+        }
+        return false;
+    }
 
     function getUserFromToken($token) {
         global $db;
@@ -159,7 +171,27 @@
                 return;
             }
         }
-        $db->users[] = $user;
+    }
+
+    function updateMonitor($monitor) {
+        global $db;
+        foreach($db->monitors as $key => $value) {
+            if($value->id == $monitor->id) {
+                $db->monitors[$key] = $monitor;
+                return;
+            }
+        }
+    }
+
+    function deleteMonitor($monitor) {
+        global $db;
+        foreach($db->monitors as $key => $value) {
+            if($value->id == $monitor->id) {
+                unset($db->monitors[$key]);
+                $db->monitors = array_values($db->monitors);
+                return;
+            }
+        }
     }
 
     function newUserId() {

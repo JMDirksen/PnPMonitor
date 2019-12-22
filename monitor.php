@@ -19,11 +19,6 @@ if(!extension_loaded("openssl"))
 // Load database
 list($db, $dbhandle) = loadDb();
 
-// Setup database
-if(!isset($db->sendMailAtXFails)) $db->sendMailAtXFails = 3;
-if(!isset($db->sendMailAtXSuccesses)) $db->sendMailAtXSuccesses = 2;
-if(!isset($db->monitors)) $db->monitors = [];
-
 // Iterate monitors
 foreach($db->monitors as $key => $monitor) {
     // Setup monitor
