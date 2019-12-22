@@ -17,7 +17,7 @@ if(!extension_loaded("openssl"))
     die("Error: Extension openssl required.");
 
 // Load database
-list($db, $handle) = loadDb();
+list($db, $dbhandle) = loadDb();
 
 // Setup database
 if(!isset($db->sendMailAtXFails)) $db->sendMailAtXFails = 3;

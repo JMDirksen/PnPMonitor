@@ -89,6 +89,20 @@ if(isset($_POST['loginForm'])) {
     redirect();
 }
 
+// Handle: Add monitor
+if(isset($_POST['addPage']) or isset($_POST['addPort'])) {
+    if(!isset($_SESSION['id'])) redirect();
+    if(isset($_POST['addPage'])) {
+        $monitor = pageMonitor($_SESSION['id'], $_POST['name'], $_POST['url'], $_POST['text']);
+    }
+    else {
+        $monitor = portMonitor($_SESSION['id'], $_POST['name'], $_POST['host'], $_POST['port']);
+    }
+    addMonitor($monitor);
+    saveDb();
+    redirect();
+}
+
 // Handle: Logout
 if(isset($_GET['logout'])) {
     unset($_SESSION['id']);
@@ -113,6 +127,28 @@ if(isset($_GET['register'])) {
     echo '<input type="password" name="password2" placeholder="password check" required><br>';
     echo '<input type="submit" name="registerForm" value="Register">';
     echo '</form>';
+}
+
+// Monitors form
+elseif(isset($_SESSION['id'])) {
+    // Add Page monitor form
+    echo '<form method="post">';
+    echo '<input type="hidden" name="type" value="page">';
+    echo '<input type="text" name="name" placeholder="name" required>';
+    echo '<input type="text" name="url" placeholder="http(s)://" required>';
+    echo '<input type="text" name="text" placeholder="text">';
+    echo '<input type="submit" name="addPage" value="Add Page Monitor">';
+    echo '</form>';
+    // Add Port monitor form
+    echo '<form method="post">';
+    echo '<input type="hidden" name="type" value="port">';
+    echo '<input type="text" name="name" placeholder="name" required>';
+    echo '<input type="text" name="host" placeholder="host" required>';
+    echo '<input type="text" name="port" placeholder="port" required>';
+    echo '<input type="submit" name="addPort" value="Add Port Monitor">';
+    echo '</form>';
+    // Logout
+    echo '<a href="?logout">Logout</a>';
 }
 
 // Login form

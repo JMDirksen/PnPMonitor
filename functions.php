@@ -22,26 +22,29 @@
         if(fwrite($dbhandle, json_encode($db)) === false) die("Unable to write db");
     }
 
-    function pageMonitor($name, $url, $text = "") {
+    function pageMonitor($userid, $name, $url, $text = "") {
         return (object) array(
             "name" => $name,
             "type" => "page",
             "url"  => $url,
             "text" => $text,
+            "user" => $userid,
         );
     }
 
-    function portMonitor($name, $host, $port) {
+    function portMonitor($userid, $name, $host, $port) {
         return (object) array(
             "name" => $name,
             "type" => "port",
             "host" => $host,
             "port" => $port,
+            "user" => $userid,
         );
     }
 
     function addMonitor($monitor) {
         global $db;
+        $monitor->id = newMonitorId();
         $db->monitors[] = $monitor;
     }
 
@@ -163,6 +166,13 @@
         global $db;
         $id = 1;
         foreach($db->users as $user) if($user->id >= $id) $id = $user->id+1;
+        return $id;
+    }
+
+    function newMonitorId() {
+        global $db;
+        $id = 1;
+        foreach($db->monitors as $monitor) if($monitor->id >= $id) $id = $monitor->id+1;
         return $id;
     }
 
