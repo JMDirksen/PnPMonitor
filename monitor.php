@@ -54,9 +54,9 @@ foreach($db->monitors as $key => $monitor) {
     else {
         // Success
         $monitor->successCount++;
+        $monitor->failCount = 0;
         if($monitor->successCount >= $db->sendMailAtXSuccesses && $monitor->failing) {
             $monitor->failing = false;
-            $monitor->failCount = 0;
             $subject = "PnPMonitor restored - $monitor->name";
             $body = "Monitor $monitor->name has been restored.\n";
             sendMail($subject, $body);
