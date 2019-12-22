@@ -5,6 +5,7 @@ ini_set("display_errors", 1);
 ini_set("display_startup_errors", 1);
 error_reporting(E_ALL);
 chdir(__DIR__);
+ini_set("default_socket_timeout", 3);
 
 // Load required files
 require_once("functions.php");

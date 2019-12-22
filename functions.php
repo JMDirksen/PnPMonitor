@@ -71,8 +71,7 @@
             $portMonitor->host,
             $portMonitor->port,
             $errno,
-            $errstr,
-            10
+            $errstr
         );
         $time2 = microtime(true);
         if(is_resource($connection)) {
