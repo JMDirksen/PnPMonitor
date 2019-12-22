@@ -124,7 +124,7 @@
         return false;
     }
 
-    function newToken($length = 32) {
+    function newSecret($length = 5) {
         $token = "";
         $chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         for($i = 0; $i < $length; $i++) {
@@ -135,15 +135,16 @@
         return $token;
     }
 
-    function tokenLink($token) {
+    function confirmLink($secret) {
         $protocol = ($_SERVER['HTTPS']=="on") ? "https://" : "http://";
         $host = $_SERVER['HTTP_HOST'];
-        return $protocol.$host."/?token=".$token;
+        return $protocol.$host."/?confirm=".$secret;
     }
 
-    function updateUser(&$db, $user) {
+    function updateUser($user) {
+        global $db;
         foreach($db->users as $key => $value) {
-            if($value->email == $user->email) {
+            if($value->id == $user->id) {
                 $db->users[$key] = $user;
                 return;
             }
@@ -151,6 +152,36 @@
         $db->users[] = $user;
     }
 
+    function newUserId(&$db) {
+        $id = 1;
+        foreach($db->users as $user) if($user->id >= $id) $id = $user->id+1;
+        return $id;
+    }
+
+    function verifyLogin(&$db, $email, $password) {
+        foreach($db->users as $user) {
+            if($user->email == $email) {
+                if(password_verify($password, $user->password)) {
+                    return $user;
+                }
+                else {
+                    return false;
+                }
+            }
+        }
+        return false;
+    }
+    
+    function confirm($code) {
+        global $db;
+        foreach($db->users as $user) {
+            if($user->confirm == $code) {
+                unset($user->confirm);
+                updateUser($user);
+            }
+        }
+    }
+    
     function thisUrl() {
         $protocol = ($_SERVER['HTTPS']=="on") ? "https://" : "http://";
         $host = $_SERVER['HTTP_HOST'];
