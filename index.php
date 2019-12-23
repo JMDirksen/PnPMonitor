@@ -21,6 +21,11 @@ if(isset($_SESSION['msg'])) {
     echo '<div class="msg">'.$_SESSION['msg'].'</div>';
     unset($_SESSION['msg']);
 }
+// Error message
+if(isset($_SESSION['errorMsg'])) {
+    echo '<div class="errorMsg">'.$_SESSION['errorMsg'].'</div>';
+    unset($_SESSION['errorMsg']);
+}
 
 // Register form
 if(isset($_GET['register'])) {

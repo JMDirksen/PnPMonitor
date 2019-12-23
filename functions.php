@@ -244,7 +244,13 @@
     }
 
     function redirect($url = "") {
-        if(empty($url)) $url = thisUrl();
-        header("Location: $url", true, 303);
+        $location = thisUrl().$url;
+        header("Location: $location", true, 303);
         die();
+    }
+
+    function msg($message, $error = false, $redirect = "") {
+        if($error) $_SESSION['errorMsg'] = $message;
+        else $_SESSION['msg'] = $message;
+        redirect($redirect);
     }
