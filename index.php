@@ -53,7 +53,9 @@ elseif(isset($_SESSION['id'])) {
                      'value="'.$monitor->text.'" placeholder="text">';
                 echo '<input type="submit" name="editPage" '.
                      'value="Save Page Monitor">';
-                echo '<input type="submit" name="deleteMonitor" value="X">';
+                echo '<input type="submit" name="deleteMonitor" value="X" '.
+                     'onClick="return confirm(\'Delete monitor '.
+                     $monitor->name.'?\')">';
                 echo '</form>';
             }
             else {
@@ -68,7 +70,9 @@ elseif(isset($_SESSION['id'])) {
                      'value="'.$monitor->port.'" placeholder="port" required>';
                 echo '<input type="submit" name="editPort" '.
                      'value="Save Port Monitor">';
-                echo '<input type="submit" name="deleteMonitor" value="X">';
+                echo '<input type="submit" name="deleteMonitor" value="X" '.
+                     'onClick="return confirm(\'Delete monitor '.
+                     $monitor->name.'?\')">';
                 echo '</form>';
             }
         }        
