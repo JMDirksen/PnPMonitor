@@ -50,7 +50,8 @@ elseif(isset($_SESSION['id'])) {
                 echo '<input type="text" name="url" value="'.$monitor->url.'" '.
                      'placeholder="http(s)://" required>';
                 echo '<input type="text" name="text" '.
-                     'value="'.$monitor->text.'" placeholder="text">';
+                     'value="'.$monitor->text.'" placeholder="should contain '.
+                     'this text">';
                 echo '<input type="submit" name="editPage" '.
                      'value="Save Page Monitor">';
                 echo '<input type="submit" name="deleteMonitor" value="X" '.
@@ -66,7 +67,7 @@ elseif(isset($_SESSION['id'])) {
                      'value="'.$monitor->name.'" placeholder="name" required>';
                 echo '<input type="text" name="host" '.
                      'value="'.$monitor->host.'" placeholder="host" required>';
-                echo '<input type="text" name="port" '.
+                echo '<input type="number" min=1 max=65535 name="port" '.
                      'value="'.$monitor->port.'" placeholder="port" required>';
                 echo '<input type="submit" name="editPort" '.
                      'value="Save Port Monitor">';
@@ -79,11 +80,13 @@ elseif(isset($_SESSION['id'])) {
     }
 
     // Add Page monitor form
+    echo '<hr>';
     echo '<form action="action.php" method="post">';
     echo '<input type="hidden" name="type" value="page">';
     echo '<input type="text" name="name" placeholder="name" required>';
     echo '<input type="text" name="url" placeholder="http(s)://" required>';
-    echo '<input type="text" name="text" placeholder="text">';
+    echo '<input type="text" name="text" placeholder="should contain this '.
+         'text">';
     echo '<input type="submit" name="addPage" value="Add Page Monitor">';
     echo '</form>';
     // Add Port monitor form
@@ -91,7 +94,8 @@ elseif(isset($_SESSION['id'])) {
     echo '<input type="hidden" name="type" value="port">';
     echo '<input type="text" name="name" placeholder="name" required>';
     echo '<input type="text" name="host" placeholder="host" required>';
-    echo '<input type="text" name="port" placeholder="port" required>';
+    echo '<input type="number" min=1 max=65535 name="port" placeholder="port" '.
+         'required>';
     echo '<input type="submit" name="addPort" value="Add Port Monitor">';
     echo '</form>';
     // Logout

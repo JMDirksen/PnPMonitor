@@ -15,13 +15,13 @@ list($db, $dbhandle) = loadDb();
 
 // Register
 if(isset($_POST['registerForm'])) {
-    $email = $_POST['email'];
+    $email = filter_var($_POST['email'], FILTER_VALIDATE_EMAIL);
     $_SESSION['email'] = $email;
     $password = $_POST['password'];
     $password2 = $_POST['password2'];
 
-    if(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $_SESSION['msg'] = "Invalid email format";
+    if(!$email) {
+        $_SESSION['msg'] = "Invalid email";
         redirect(thisUrl()."?register");
     }
 
@@ -71,7 +71,7 @@ if(isset($_GET['confirm'])) {
 
 // Login
 if(isset($_POST['loginForm'])) {
-    $email = $_POST['email'];
+    $email = filter_var($_POST['email'], FILTER_VALIDATE_EMAIL);
     $password = $_POST['password'];
     $_SESSION["email"] = $email;
     $user = verifyLogin($email, $password);
@@ -89,16 +89,41 @@ if(isset($_POST['loginForm'])) {
     redirect();
 }
 
+// Login check
+if(!isset($_SESSION['id'])) redirect();
+$userid = $_SESSION['id'];
+// --- Must be logged in for below actions ---
+
+
 // Add monitor
 if(isset($_POST['addPage']) or isset($_POST['addPort'])) {
-    if(!isset($_SESSION['id'])) redirect();
+    $name = filter_var($_POST['name'], FILTER_SANITIZE_STRING);
+    if(!$name) {
+        $_SESSION['msg'] = "Invalid name";
+        redirect();
+    }
     if(isset($_POST['addPage'])) {
-        $monitor = pageMonitor($_SESSION['id'], $_POST['name'],
-                   $_POST['url'], $_POST['text']);
+        $url = filter_var($_POST['url'], FILTER_VALIDATE_URL, FILTER_FLAG_SCHEME_REQUIRED);
+        $text = filter_var($_POST['text'], FILTER_SANITIZE_STRING);
+        if(!$url) {
+            $_SESSION['msg'] = "Invalid url";
+            redirect();
+        }
+        $monitor = pageMonitor($userid, $name, $url, $text);
     }
     else {
-        $monitor = portMonitor($_SESSION['id'], $_POST['name'],
-                   $_POST['host'], $_POST['port']);
+        $host = filter_var($_POST['host'], FILTER_VALIDATE_DOMAIN,
+                           FILTER_FLAG_HOSTNAME);
+        $port = filter_var($_POST['port'], FILTER_VALIDATE_INT);
+        if(!$host) {
+            $_SESSION['msg'] = "Invalid host";
+            redirect();
+        }
+        if(!$port) {
+            $_SESSION['msg'] = "Invalid port";
+            redirect();
+        }
+        $monitor = portMonitor($userid, $name, $host, $port);
     }
     addMonitor($monitor);
     saveDb();
@@ -108,8 +133,7 @@ if(isset($_POST['addPage']) or isset($_POST['addPort'])) {
 // Edit monitor
 if(isset($_POST['editPage']) or isset($_POST['editPort'])) {
     $monitor = getMonitor($_POST['id']);
-    if(!isset($_SESSION['id'])) redirect();
-    if($monitor->user <> $_SESSION['id']) redirect();
+    if($monitor->user <> $userid) redirect();
     
     $monitor->name = $_POST['name'];
     if(isset($_POST['editPage'])) {
@@ -128,7 +152,7 @@ if(isset($_POST['editPage']) or isset($_POST['editPort'])) {
 // Delete monitor
 if(isset($_POST['deleteMonitor'])) {
     $monitor = getMonitor($_POST['id']);
-    if(!$monitor->user == $_SESSION['id']) redirect();
+    if($monitor->user <> $userid) redirect();
     deleteMonitor($monitor);
     saveDb();
     redirect();
