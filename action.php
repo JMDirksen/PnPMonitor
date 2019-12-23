@@ -30,7 +30,7 @@ if(isset($_POST['registerForm'])) {
 
     $user = getUser($email);
     if($user) msg("A user with this email already exists", true, "?register");
-    
+
     $user = (object) null;
     $user->id = newUserId();
     $user->email = $email;
@@ -85,6 +85,9 @@ if(isset($_POST['addPage']) or isset($_POST['addPort'])) {
         $text = filter_var($_POST['text'], FILTER_SANITIZE_STRING);
         if(!$url) msg("Invalid url", true);
         $monitor = pageMonitor($userid, $name, $url, $text);
+        unset($_SESSION['pagename']);
+        unset($_SESSION['url']);
+        unset($_SESSION['text']);
     }
     else {
         $host = filter_var($_POST['host'], FILTER_VALIDATE_DOMAIN,
@@ -93,27 +96,11 @@ if(isset($_POST['addPage']) or isset($_POST['addPort'])) {
         if(!$host) msg("Invalid host", true);
         if(!$port) msg("Invalid port", true);
         $monitor = portMonitor($userid, $name, $host, $port);
+        unset($_SESSION['portname']);
+        unset($_SESSION['host']);
+        unset($_SESSION['port']);
     }
     addMonitor($monitor);
-    saveDb();
-    redirect();
-}
-
-// Edit monitor
-if(isset($_POST['editPage']) or isset($_POST['editPort'])) {
-    $monitor = getMonitor($_POST['id']);
-    if($monitor->user <> $userid) redirect();
-    
-    $monitor->name = $_POST['name'];
-    if(isset($_POST['editPage'])) {
-        $monitor->url = $_POST['url'];
-        $monitor->text = $_POST['text'];
-    }
-    else {
-        $monitor->host = $_POST['host'];
-        $monitor->port = $_POST['port'];
-    }
-    updateMonitor($monitor);
     saveDb();
     redirect();
 }
@@ -121,7 +108,17 @@ if(isset($_POST['editPage']) or isset($_POST['editPort'])) {
 // Delete monitor
 if(isset($_POST['deleteMonitor'])) {
     $monitor = getMonitor($_POST['id']);
-    if($monitor->user <> $userid) redirect();
+    if($monitor->user <> $userid) msg("Not your monitor", true);
+    if($monitor->type == "page") {
+        $_SESSION['pagename'] = $monitor->name;
+        $_SESSION['url'] = $monitor->url;
+        $_SESSION['text'] = $monitor->text;
+    }
+    else {
+        $_SESSION['portname'] = $monitor->name;
+        $_SESSION['host'] = $monitor->host;
+        $_SESSION['port'] = $monitor->port;
+    }
     deleteMonitor($monitor);
     saveDb();
     redirect();

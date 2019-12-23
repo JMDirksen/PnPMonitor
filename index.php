@@ -41,68 +41,59 @@ if(isset($_GET['register'])) {
     echo '</form>';
 }
 
-// Monitors form
+// Monitors
 elseif(isset($_SESSION['id'])) {
+
     // Monitors list
+    echo "<table>";
     foreach($db->monitors as $monitor) {
-        if($monitor->user == $_SESSION['id']) {
-            if($monitor->type == "page") {
-                echo '<form action="action.php" method="post">';
-                echo '<input type="hidden" name="id" value="'.$monitor->id.'">';
-                echo '<input type="hidden" name="type" value="page">';
-                echo '<input type="text" name="name" '.
-                     'value="'.$monitor->name.'" placeholder="name" required>';
-                echo '<input type="text" name="url" value="'.$monitor->url.'" '.
-                     'placeholder="http(s)://" required>';
-                echo '<input type="text" name="text" '.
-                     'value="'.$monitor->text.'" placeholder="should contain '.
-                     'this text">';
-                echo '<input type="submit" name="editPage" '.
-                     'value="Save Page Monitor">';
-                echo '<input type="submit" name="deleteMonitor" value="X" '.
-                     'onClick="return confirm(\'Delete monitor '.
-                     $monitor->name.'?\')">';
-                echo '</form>';
-            }
-            else {
-                echo '<form action="action.php" method="post">';
-                echo '<input type="hidden" name="id" value="'.$monitor->id.'">';
-                echo '<input type="hidden" name="type" value="port">';
-                echo '<input type="text" name="name" '.
-                     'value="'.$monitor->name.'" placeholder="name" required>';
-                echo '<input type="text" name="host" '.
-                     'value="'.$monitor->host.'" placeholder="host" required>';
-                echo '<input type="number" min=1 max=65535 name="port" '.
-                     'value="'.$monitor->port.'" placeholder="port" required>';
-                echo '<input type="submit" name="editPort" '.
-                     'value="Save Port Monitor">';
-                echo '<input type="submit" name="deleteMonitor" value="X" '.
-                     'onClick="return confirm(\'Delete monitor '.
-                     $monitor->name.'?\')">';
-                echo '</form>';
-            }
-        }        
+        if($monitor->user <> $_SESSION['id']) continue;
+        $page = $monitor->type == "page" ? true : false;
+        echo '<tr>';
+        echo '<td>'.$monitor->name.'</td>';
+        echo '<td>'.($page?$monitor->url:$monitor->host).'</td>';
+        echo '<td>'.($page?$monitor->text:$monitor->port).'</td>';
+        echo '<td><form action="action.php" method="post">';
+        echo '<input type="hidden" name="id" value="'.$monitor->id.'">';
+        echo '<input type="submit" name="deleteMonitor" value="Delete">';
+        echo '</form></td>';
+        echo '</tr>';
     }
+    echo "</table>";
 
     // Add Page monitor form
     echo '<hr>';
     echo '<form action="action.php" method="post">';
     echo '<input type="hidden" name="type" value="page">';
-    echo '<input type="text" name="name" placeholder="name" required>';
-    echo '<input type="text" name="url" placeholder="http(s)://" required>';
+    echo '<input type="text" name="name" placeholder="name" required';
+    if(isset($_SESSION['pagename'])) echo ' value="'.$_SESSION['pagename'].'"';
+    echo '>';
+    echo '<input type="text" name="url" placeholder="http(s)://" required';
+    if(isset($_SESSION['url'])) echo ' value="'.$_SESSION['url'].'"';
+    echo '>';
     echo '<input type="text" name="text" placeholder="should contain this '.
-         'text">';
+         'text"';
+    if(isset($_SESSION['text'])) echo ' value="'.$_SESSION['text'].'"';
+    echo '>';
     echo '<input type="submit" name="addPage" value="Add Page Monitor">';
     echo '</form>';
+
     // Add Port monitor form
     echo '<form action="action.php" method="post">';
     echo '<input type="hidden" name="type" value="port">';
-    echo '<input type="text" name="name" placeholder="name" required>';
-    echo '<input type="text" name="host" placeholder="host" required>';
+    echo '<input type="text" name="name" placeholder="name" required';
+    if(isset($_SESSION['portname'])) echo ' value="'.$_SESSION['portname'].'"';
+    echo '>';
+    echo '<input type="text" name="host" placeholder="host" required';
+    if(isset($_SESSION['host'])) echo ' value="'.$_SESSION['host'].'"';
+    echo '>';
     echo '<input type="number" min=1 max=65535 name="port" placeholder="port" '.
-         'required>';
+         'required';
+    if(isset($_SESSION['port'])) echo ' value="'.$_SESSION['port'].'"';
+    echo '>';
     echo '<input type="submit" name="addPort" value="Add Port Monitor">';
     echo '</form>';
+
     // Logout
     echo '<form action="action.php" method="post">';
     echo '<input type="submit" name="logout" value="Logout">';

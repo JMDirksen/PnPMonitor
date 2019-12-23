@@ -34,7 +34,7 @@ foreach($db->monitors as $key => $monitor) {
     if(!isset($monitor->failing)) $monitor->failing = false;
     if(!isset($monitor->successCount)) $monitor->successCount = 0;
     if(!isset($monitor->failCount)) $monitor->failCount = 0;
-    
+
     // Test monitor
     if($debug) echo "Monitor: ".$monitor->name." (".$monitor->type." ".
                     ($monitor->type=="page"?$monitor->url:$monitor->host)." ".
@@ -43,7 +43,7 @@ foreach($db->monitors as $key => $monitor) {
     $result = testMonitor($monitor);
     if($debug) echo "Result: ".(!$result ? "false" : $result)."\n";
     $monitor->lastResult = $result;
-    
+
     // Process result
     if($result === false) {
         // Failure
@@ -78,10 +78,10 @@ foreach($db->monitors as $key => $monitor) {
             sendMail($subject, $body);
         }
     }
-    
+
     if($debug) echo "Stats: ".$monitor->successCount." ".$monitor->failCount.
                     " ".($monitor->failing ? "failing" : "ok")."\n\n";
-    
+
     // Update monitor to database
     $db->monitors[$key] = $monitor;
 }

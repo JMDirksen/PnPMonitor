@@ -129,7 +129,7 @@
         }
         return false;
     }
-    
+
     function getMonitor($id) {
         global $db;
         foreach($db->monitors as $monitor) {
@@ -170,16 +170,6 @@
         foreach($db->users as $key => $value) {
             if($value->id == $user->id) {
                 $db->users[$key] = $user;
-                return;
-            }
-        }
-    }
-
-    function updateMonitor($monitor) {
-        global $db;
-        foreach($db->monitors as $key => $value) {
-            if($value->id == $monitor->id) {
-                $db->monitors[$key] = $monitor;
                 return;
             }
         }
@@ -226,7 +216,7 @@
         }
         return false;
     }
-    
+
     function confirm($code) {
         global $db;
         foreach($db->users as $user) {
@@ -236,7 +226,7 @@
             }
         }
     }
-    
+
     function thisUrl() {
         $protocol = ($_SERVER['HTTPS']=="on") ? "https://" : "http://";
         $host = $_SERVER['HTTP_HOST'];
