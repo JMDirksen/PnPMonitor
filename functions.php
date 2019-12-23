@@ -23,7 +23,8 @@
         global $db, $dbhandle;
         if(!ftruncate($dbhandle, 0)) die("Unable to truncate db");
         if(!rewind($dbhandle)) die("Unable to rewind db");
-        if(fwrite($dbhandle, json_encode($db)) === false) die("Unable to write db");
+        if(fwrite($dbhandle, json_encode($db)) === false)
+            die("Unable to write db");
     }
 
     function pageMonitor($userid, $name, $url, $text = "") {
@@ -147,7 +148,9 @@
 
     function newSecret($length = 5) {
         $token = "";
-        $chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        $chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".
+                 "abcdefghijklmnopqrstuvwxyz".
+                 "0123456789";
         for($i = 0; $i < $length; $i++) {
             $rnd = rand(0,strlen($chars)-1);
             $char = $chars{$rnd};
@@ -159,7 +162,7 @@
     function confirmLink($secret) {
         $protocol = ($_SERVER['HTTPS']=="on") ? "https://" : "http://";
         $host = $_SERVER['HTTP_HOST'];
-        return $protocol.$host."/?confirm=".$secret;
+        return $protocol.$host."/action.php?confirm=".$secret;
     }
 
     function updateUser($user) {
@@ -196,14 +199,18 @@
     function newUserId() {
         global $db;
         $id = 1;
-        foreach($db->users as $user) if($user->id >= $id) $id = $user->id+1;
+        foreach($db->users as $user)
+            if($user->id >= $id)
+                $id = $user->id+1;
         return $id;
     }
 
     function newMonitorId() {
         global $db;
         $id = 1;
-        foreach($db->monitors as $monitor) if($monitor->id >= $id) $id = $monitor->id+1;
+        foreach($db->monitors as $monitor)
+            if($monitor->id >= $id)
+                $id = $monitor->id+1;
         return $id;
     }
 
@@ -211,12 +218,10 @@
         global $db;
         foreach($db->users as $user) {
             if($user->email == $email) {
-                if(password_verify($password, $user->password)) {
+                if(password_verify($password, $user->password))
                     return $user;
-                }
-                else {
+                else
                     return false;
-                }
             }
         }
         return false;

@@ -13,128 +13,6 @@ $config = require_once('config.php');
 // Load database
 list($db, $dbhandle) = loadDb();
 
-// Handle: Register
-if(isset($_POST['registerForm'])) {
-    $email = $_POST['email'];
-    $_SESSION['email'] = $email;
-    $password = $_POST['password'];
-    $password2 = $_POST['password2'];
-
-    if(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $_SESSION['msg'] = "Invalid email format";
-        redirect(thisUrl()."?register");
-    }
-
-    if(strlen($password) < 5) {
-        $_SESSION['msg'] = "Password needs to be at least 5 characters long";
-        redirect(thisUrl()."?register");
-    }
-
-    if($password <> $password2) {
-        $_SESSION['msg'] = "Passwords do not match";
-        redirect(thisUrl()."?register");
-    }
-
-    $user = getUser($email);
-    if($user) {
-        $_SESSION['msg'] = "A user with this email already exists";
-        redirect(thisUrl()."?register");
-    }
-    
-    $user = (object) null;
-    $user->id = newUserId();
-    $user->email = $email;
-    $user->password = password_hash($password, PASSWORD_DEFAULT);
-    $user->confirm = newSecret();
-    $db->users[] = $user;
-    saveDb();
-    sendMail("PnPMonitor email confirmation", confirmLink($user->confirm));
-    $_SESSION['msg'] = "An email has been sent for confirmation";
-    redirect();
-}
-
-// Handle: Resend confirmation code
-if(isset($_GET['resend'])) {
-    $user = getUser($_SESSION['email']);
-    sendMail("PnPMonitor email confirmation", confirmLink($user->confirm));
-    $_SESSION['msg'] = "An email has been sent for confirmation";
-    redirect();
-}
-
-// Handle: Confirm
-if(isset($_GET['confirm'])) {
-    confirm($_GET['confirm']);
-    saveDb();
-    $_SESSION['msg'] = "Email has been confirmed";
-    redirect();
-}
-
-// Handle: Login
-if(isset($_POST['loginForm'])) {
-    $email = $_POST['email'];
-    $password = $_POST['password'];
-    $_SESSION["email"] = $email;
-    $user = verifyLogin($email, $password);
-    if(!$user) {
-        $_SESSION['msg'] = "Incorrect username or password";
-        redirect();
-    }
-    if(isset($user->confirm)) {
-        $_SESSION['msg'] = "Email has to be confirmed first, find the confirmation link in your mailbox (<a href=\"?resend\">resend</a>)";
-        redirect();
-    }
-    $_SESSION['id'] = $user->id;
-    redirect();
-}
-
-// Handle: Add monitor
-if(isset($_POST['addPage']) or isset($_POST['addPort'])) {
-    if(!isset($_SESSION['id'])) redirect();
-    if(isset($_POST['addPage'])) {
-        $monitor = pageMonitor($_SESSION['id'], $_POST['name'], $_POST['url'], $_POST['text']);
-    }
-    else {
-        $monitor = portMonitor($_SESSION['id'], $_POST['name'], $_POST['host'], $_POST['port']);
-    }
-    addMonitor($monitor);
-    saveDb();
-    redirect();
-}
-
-// Handle: Edit monitor
-if(isset($_POST['editPage']) or isset($_POST['editPort'])) {
-    $monitor = getMonitor($_POST['id']);
-    if(!isset($_SESSION['id'])) redirect();
-    if($monitor->user <> $_SESSION['id']) redirect();
-    
-    $monitor->name = $_POST['name'];
-    if(isset($_POST['editPage'])) {
-        $monitor->url = $_POST['url'];
-        $monitor->text = $_POST['text'];
-    }
-    else {
-        $monitor->host = $_POST['host'];
-        $monitor->port = $_POST['port'];
-    }
-    updateMonitor($monitor);
-    saveDb();
-    redirect();
-}
-
-if(isset($_POST['deleteMonitor'])) {
-    $monitor = getMonitor($_POST['id']);
-    if(!$monitor->user == $_SESSION['id']) redirect();
-    deleteMonitor($monitor);
-    saveDb();
-    redirect();
-}
-
-// Handle: Logout
-if(isset($_GET['logout'])) {
-    unset($_SESSION['id']);
-    redirect();
-}
-
 // Header
 echo "<html><head><title>Page and Port Monitor</title></head><body>";
 
@@ -146,11 +24,14 @@ if(isset($_SESSION['msg'])) {
 
 // Register form
 if(isset($_GET['register'])) {
-    echo '<form method="post">';
     $email = isset($_SESSION['email']) ? $_SESSION['email'] : "";
-    echo '<input type="email" name="email" placeholder="email" value="'.$email.'" required><br>';
-    echo '<input type="password" name="password" placeholder="password" required><br>';
-    echo '<input type="password" name="password2" placeholder="password check" required><br>';
+    echo '<form action="action.php" method="post">';
+    echo '<input type="email" name="email" placeholder="email" '.
+         'value="'.$email.'" required><br>';
+    echo '<input type="password" name="password" placeholder="password" '.
+         'required><br>';
+    echo '<input type="password" name="password2" placeholder="password check"'.
+         ' required><br>';
     echo '<input type="submit" name="registerForm" value="Register">';
     echo '</form>';
 }
@@ -161,24 +42,32 @@ elseif(isset($_SESSION['id'])) {
     foreach($db->monitors as $monitor) {
         if($monitor->user == $_SESSION['id']) {
             if($monitor->type == "page") {
-                echo '<form method="post">';
+                echo '<form action="action.php" method="post">';
                 echo '<input type="hidden" name="id" value="'.$monitor->id.'">';
                 echo '<input type="hidden" name="type" value="page">';
-                echo '<input type="text" name="name" value="'.$monitor->name.'" placeholder="name" required>';
-                echo '<input type="text" name="url" value="'.$monitor->url.'" placeholder="http(s)://" required>';
-                echo '<input type="text" name="text" value="'.$monitor->text.'" placeholder="text">';
-                echo '<input type="submit" name="editPage" value="Save Page Monitor">';
+                echo '<input type="text" name="name" '.
+                     'value="'.$monitor->name.'" placeholder="name" required>';
+                echo '<input type="text" name="url" value="'.$monitor->url.'" '.
+                     'placeholder="http(s)://" required>';
+                echo '<input type="text" name="text" '.
+                     'value="'.$monitor->text.'" placeholder="text">';
+                echo '<input type="submit" name="editPage" '.
+                     'value="Save Page Monitor">';
                 echo '<input type="submit" name="deleteMonitor" value="X">';
                 echo '</form>';
             }
             else {
-                echo '<form method="post">';
+                echo '<form action="action.php" method="post">';
                 echo '<input type="hidden" name="id" value="'.$monitor->id.'">';
                 echo '<input type="hidden" name="type" value="port">';
-                echo '<input type="text" name="name" value="'.$monitor->name.'" placeholder="name" required>';
-                echo '<input type="text" name="host" value="'.$monitor->host.'" placeholder="host" required>';
-                echo '<input type="text" name="port" value="'.$monitor->port.'" placeholder="port" required>';
-                echo '<input type="submit" name="editPort" value="Save Port Monitor">';
+                echo '<input type="text" name="name" '.
+                     'value="'.$monitor->name.'" placeholder="name" required>';
+                echo '<input type="text" name="host" '.
+                     'value="'.$monitor->host.'" placeholder="host" required>';
+                echo '<input type="text" name="port" '.
+                     'value="'.$monitor->port.'" placeholder="port" required>';
+                echo '<input type="submit" name="editPort" '.
+                     'value="Save Port Monitor">';
                 echo '<input type="submit" name="deleteMonitor" value="X">';
                 echo '</form>';
             }
@@ -186,7 +75,7 @@ elseif(isset($_SESSION['id'])) {
     }
 
     // Add Page monitor form
-    echo '<form method="post">';
+    echo '<form action="action.php" method="post">';
     echo '<input type="hidden" name="type" value="page">';
     echo '<input type="text" name="name" placeholder="name" required>';
     echo '<input type="text" name="url" placeholder="http(s)://" required>';
@@ -194,7 +83,7 @@ elseif(isset($_SESSION['id'])) {
     echo '<input type="submit" name="addPage" value="Add Page Monitor">';
     echo '</form>';
     // Add Port monitor form
-    echo '<form method="post">';
+    echo '<form action="action.php" method="post">';
     echo '<input type="hidden" name="type" value="port">';
     echo '<input type="text" name="name" placeholder="name" required>';
     echo '<input type="text" name="host" placeholder="host" required>';
@@ -202,15 +91,17 @@ elseif(isset($_SESSION['id'])) {
     echo '<input type="submit" name="addPort" value="Add Port Monitor">';
     echo '</form>';
     // Logout
-    echo '<a href="?logout">Logout</a>';
+    echo '<form action="action.php" method="post">';
+    echo '<input type="submit" name="logout" value="Logout">';
+    echo '</form>';
 }
 
 // Login form
 else {
-    echo '<form method="post">';
-    $email = isset($_SESSION['email']) ? $_SESSION['email'] : "";
-    echo '<input type="email" name="email" placeholder="email" value="'.$email.'" required><br>';
-    echo '<input type="password" name="password" placeholder="password" required><br>';
+    echo '<form action="action.php" method="post">';
+    echo '<input type="email" name="email" placeholder="email" required><br>';
+    echo '<input type="password" name="password" placeholder="password" '.
+         'required><br>';
     echo '<input type="submit" name="loginForm" value="Login"> ';
     echo '<a href="?register">Register</a>';
     echo '</form>';
