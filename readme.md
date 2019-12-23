@@ -10,21 +10,5 @@ Sends an email when a fault is detected.
 ## Setup steps
 - Copy [config.php.template](config.php.template) to ```config.php```
 - Modify ```config.php``` with correct values
-- Add monitors ... (no interface yet)
 - Run monitor like every minute or so ```php monitor.php```
-
-## Linux setup
-Tested on Ubuntu 18.04
-```
-sudo apt install git php apache2
-
-git clone --recurse-submodules https://github.com/JeftaDirksen/PnPMonitor.git
-cd PnPMonitor
-cp config.php.template config.php
-nano config.php
-  # Make necessary changes
-php monitor.php
-
-crontab -e
-  * * * * * /usr/bin/php ~/PnPMonitor/monitor.php > /dev/null
-```
+- Go to the website, register an account and add monitors
