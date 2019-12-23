@@ -48,14 +48,22 @@ if(isset($_GET['register'])) {
 elseif(isset($_SESSION['id'])) {
 
     // Monitors list
-    echo "<table><tr><th>Name</th><th>URL/Host</th><th>Text/Port</th><th> </th></th>";
+    echo '<table><tr><th>Name</th><th>URL/Host</th><th>Text/Port</th>'.
+         '<th>Last result</th><th> </th></th>';
     foreach($db->monitors as $monitor) {
         if($monitor->user <> $_SESSION['id']) continue;
         $page = $monitor->type == "page" ? true : false;
+        $time = @$monitor->lastTime ?: "n/a";
+        if(!isset($monitor->lastResult)) $result = "n/a";
+        elseif($monitor->lastResult === false) $result = "failure";
+        else $result = $monitor->lastResult." ms";
         echo '<tr>';
         echo '<td>'.$monitor->name.'</td>';
         echo '<td>'.($page?$monitor->url:$monitor->host).'</td>';
         echo '<td>'.($page?$monitor->text:$monitor->port).'</td>';
+        echo '<td class="result">'.
+             'Time: '.$time.'<br>'.
+             'Response: '.$result.'</td>';
         echo '<td><form action="action.php" method="post">';
         echo '<input type="hidden" name="id" value="'.$monitor->id.'">';
         echo '<input type="submit" name="deleteMonitor" value="Delete">';

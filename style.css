@@ -50,22 +50,26 @@ input[type=submit]:hover {
     background-color: LightGreen;
 }
 
-.name {
+td.name {
     width: 100px;
 }
 
-.textport {
+td.textport {
     width: 150px;
 }
 
-.urlhost {
+td.urlhost {
     width: 200px;
 }
 
-.msg {
+div.msg {
     color: Green;
 }
 
-.errorMsg {
+div.errorMsg {
     color: Red;
+}
+
+td.result {
+    font-size: small;
 }

@@ -43,6 +43,7 @@ foreach($db->monitors as $key => $monitor) {
     $result = testMonitor($monitor);
     if($debug) echo "Result: ".(!$result ? "false" : $result)."\n";
     $monitor->lastResult = $result;
+    $monitor->lastTime = date("d-m-Y H:i:s (T)");
 
     // Process result
     if($result === false) {
