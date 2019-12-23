@@ -6,6 +6,7 @@ ini_set("display_startup_errors", 1);
 error_reporting(E_ALL);
 chdir(__DIR__);
 ini_set("default_socket_timeout", 3);
+$debug = $argv[1] == "debug" ? true : false;
 
 // Load required files
 require_once("functions.php");
@@ -20,6 +21,13 @@ if(!extension_loaded("openssl"))
 // Load database
 list($db, $dbhandle) = loadDb();
 
+// Debug
+if($debug) {
+    echo "Debug: true\n";
+    echo "SendMailAt: Failures: ".$db->sendMailAtXFails." Successes: ".
+         $db->sendMailAtXSuccesses."\n\n";
+}
+
 // Iterate monitors
 foreach($db->monitors as $key => $monitor) {
     // Setup monitor
@@ -28,7 +36,12 @@ foreach($db->monitors as $key => $monitor) {
     if(!isset($monitor->failCount)) $monitor->failCount = 0;
     
     // Test monitor
+    if($debug) echo "Monitor: ".$monitor->name." (".$monitor->type." ".
+                    ($monitor->type=="page"?$monitor->url:$monitor->host)." ".
+                    ($monitor->type=="page"?$monitor->text:$monitor->port).
+                    ")\n";
     $result = testMonitor($monitor);
+    if($debug) echo "Result: ".(!$result ? "false" : $result)."\n";
     $monitor->lastResult = $result;
     
     // Process result
@@ -49,6 +62,7 @@ foreach($db->monitors as $key => $monitor) {
         if($monitor->failCount >= $db->sendMailAtXFails && !$monitor->failing) {
             $monitor->failing = true;
             $subject = "PnPMonitor failed - $monitor->name";
+            if($debug) echo "Sending mail\n";
             sendMail($subject, $msg);
         }
     }
@@ -60,9 +74,13 @@ foreach($db->monitors as $key => $monitor) {
             $monitor->failing = false;
             $subject = "PnPMonitor restored - $monitor->name";
             $body = "Monitor $monitor->name has been restored.\n";
+            if($debug) echo "Sending mail\n";
             sendMail($subject, $body);
         }
     }
+    
+    if($debug) echo "Stats: ".$monitor->successCount." ".$monitor->failCount.
+                    " ".($monitor->failing ? "failing" : "ok")."\n\n";
     
     // Update monitor to database
     $db->monitors[$key] = $monitor;
