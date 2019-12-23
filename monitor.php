@@ -6,7 +6,7 @@ ini_set("display_startup_errors", 1);
 error_reporting(E_ALL);
 chdir(__DIR__);
 ini_set("default_socket_timeout", 3);
-$debug = $argv[1] == "debug" ? true : false;
+$debug = @$argv[1] == "debug" ? true : false;
 
 // Load required files
 require_once("functions.php");
