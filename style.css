@@ -1,31 +1,29 @@
 body {
-    background-color: white;
+    background-color: Honeydew;
     font-family: Verdana, Arial, sans-serif;
 }
 
 table {
-  border-collapse:  collapse;
-  border-spacing:   0px 0px;
-  margin-bottom:    15px;
+    border-collapse:  collapse;
+    border-spacing:   0px 0px;
+    margin-bottom:    15px;
 }
+
+tr { background-color: PaleGreen; }
+tr:nth-child(even){ background-color: LightGreen; }
+tr:hover { background-color: MediumSeaGreen; }
 
 td, th {
-    border: 1px solid #ddd;
-    padding: 5px;
+    border: 1px solid DarkGreen;
+    padding: 0px 10px;
+    color: DimGray;
 }
 
-
-tr { background-color: #fafafa; }
-tr:nth-child(even){ background-color: #f2f2f2; }
-
-tr:hover { background-color: #ddd; }
-
 th {
-  padding-top: 12px;
-  padding-bottom: 12px;
-  text-align: left;
-  background-color: #4CAF50;
-  color: white;
+    text-align: left;
+    background-color: SeaGreen;
+    color: White;
+    padding: 5px 10px;
 }
 
 form {
@@ -33,5 +31,41 @@ form {
 }
 
 input {
+    font-family: Verdana, Arial, sans-serif;
     margin: 5px;
+    background-color: Honeydew;
+    padding: 3px;
+    width: 250px;
+}
+
+input[type=submit] {
+    background-color: Honeydew;
+    color: SeaGreen;
+    padding: 5px 10px;
+    width: 150px;
+    font-weight: bold;
+}
+
+input[type=submit]:hover {
+    background-color: LightGreen;
+}
+
+.name {
+    width: 100px;
+}
+
+.textport {
+    width: 150px;
+}
+
+.urlhost {
+    width: 200px;
+}
+
+.msg {
+    color: Green;
+}
+
+.errorMsg {
+    color: Red;
 }
