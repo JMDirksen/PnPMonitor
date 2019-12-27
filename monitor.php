@@ -87,10 +87,10 @@ foreach($db->monitors as $key => $monitor) {
     $db->monitors[$key] = $monitor;
 
     // Stats
-    $stat = (object) null;
-    $stat->m = $monitor->id;
-    $stat->t = time();
-    $stat->r = $result;
+    $stat = [];
+    $stat[] = $monitor->id;
+    $stat[] = time();
+    $stat[] = $result;
     if(!isset($stats)) $stats = [];
     $stats[] = $stat;
 }

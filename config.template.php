@@ -2,6 +2,7 @@
     return array(
         "DB_FILE"     => "../db.json",  // Should not be accessible from the web
         "STATS_FILE"  => "../stats.json",
+        "STATS_DAYS"  => 7,
         
         "SMTP_HOST"   => "smtp.gmail.com",
         "SMTP_SECURE" => "tls",
