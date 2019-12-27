@@ -85,7 +85,18 @@ foreach($db->monitors as $key => $monitor) {
 
     // Update monitor to database
     $db->monitors[$key] = $monitor;
+
+    // Stats
+    $stat = (object) null;
+    $stat->m = $monitor->id;
+    $stat->t = time();
+    $stat->r = $result;
+    if(!isset($stats)) $stats = [];
+    $stats[] = $stat;
 }
 
 // Save database
 saveDb();
+
+// Save stats
+saveStats($stats);

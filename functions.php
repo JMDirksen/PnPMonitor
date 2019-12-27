@@ -244,3 +244,24 @@
         else $_SESSION['msg'] = $message;
         redirect($redirect);
     }
+
+    function saveStats($newStats) {
+        global $config;
+        $statsFile = $config['STATS_FILE'];
+        $handle = fopen($statsFile, "c+");
+        if(!$handle) die("Unable to open stats");
+        if(!flock($handle, LOCK_EX)) die("Unable to lock stats");
+        $contents = "";
+        if(filesize($statsFile)) {
+            $contents = fread($handle, filesize($statsFile));
+            if($contents === false) die("Unable to read stats");
+        }
+        $stats = json_decode($contents);
+        if(!$stats) $stats = [];
+        $stats = array_merge($stats, $newStats);
+        print_r($stats);
+        if(!ftruncate($handle, 0)) die("Unable to truncate stats");
+        if(!rewind($handle)) die("Unable to rewind stats");
+        if(fwrite($handle, json_encode($stats)) === false)
+            die("Unable to write stats");
+    }
