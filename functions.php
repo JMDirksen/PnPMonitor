@@ -181,9 +181,11 @@
             if($value->id == $monitor->id) {
                 unset($db->monitors[$key]);
                 $db->monitors = array_values($db->monitors);
+                deleteStats($monitor->id);
                 return;
             }
         }
+        deleteStats($monitor->id);
     }
 
     function newUserId() {
@@ -281,4 +283,12 @@
         foreach($stats as $key => $stat)
             if($stat[1] < $cleanupTime) unset($stats[$key]);
         return array_values($stats);
+    }
+
+    function deleteStats($monitorid) {
+        list($stats, $handle) = loadStats();
+        foreach($stats as $key => $stat)
+            if($stat[0] == $monitorid)
+                unset($stats[$key]);
+        saveStats(array_values($stats), $handle);
     }
