@@ -73,3 +73,8 @@ div.errorMsg {
 td.result {
     font-size: small;
 }
+
+a {
+    color: dimgray;
+    text-decoration: none;
+}

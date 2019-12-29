@@ -54,13 +54,13 @@
                 data.addColumn('number', 'Response time (ms)');
                 data.addRows(<?php echo $rows; ?>);
                 var options = {
+                    backgroundColor: { fill:'transparent' },
+                    colors: ['SeaGreen'],
                     legend: 'none',
                     title: '',
                     width: 500,
                     height: 250,
-                    hAxis: {
-                        format: 'dd H:mm',
-                    }
+                    hAxis: { format: 'dd H:mm' }
                 };
                 var dtformat = new google.visualization.DateFormat({pattern: "yyyy-MM-dd H:mm"});
                 dtformat.format(data, 0);
@@ -69,6 +69,7 @@
                 chart.draw(data, options);
             }
         </script>
+        <link rel="stylesheet" href="style.css">
     </head>
     <body>
         <div id="chart_div"></div>
