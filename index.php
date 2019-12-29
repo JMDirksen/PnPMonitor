@@ -64,7 +64,8 @@ elseif(isset($_SESSION['id'])) {
         echo '<td class="result">'.
              'Time: '.$time.'<br>'.
              'Response: '.$result.'</td>';
-        echo '<td><form action="action.php" method="post">';
+        echo '<td><form action="action.php" method="post" '.
+             'onSubmit="return confirm(\'Delete monitor '.$monitor->name.'?\');">';
         echo '<input type="hidden" name="id" value="'.$monitor->id.'">';
         echo '<input type="submit" name="deleteMonitor" value="Delete">';
         echo '</form></td>';
