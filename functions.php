@@ -245,11 +245,9 @@
         redirect($redirect);
     }
 
-    function saveStats($newStats) {
+    function loadStats() {
         global $config;
         $statsFile = $config['STATS_FILE'];
-        
-        // Load stats
         $handle = fopen($statsFile, "c+");
         if(!$handle) die("Unable to open stats");
         if(!flock($handle, LOCK_EX)) die("Unable to lock stats");
@@ -260,18 +258,21 @@
         }
         $stats = json_decode($contents);
         if(!$stats) $stats = [];
+        return Array($stats, $handle);
+    }
 
-        // Cleanup stats
-        $stats = cleanupStats($stats);
-        
-        // Add stats
-        $stats = array_merge($stats, $newStats);
-        
-        // Save stats
+    function saveStats($stats, $handle) {
         if(!ftruncate($handle, 0)) die("Unable to truncate stats");
         if(!rewind($handle)) die("Unable to rewind stats");
         if(fwrite($handle, json_encode($stats)) === false)
             die("Unable to write stats");
+    }
+
+    function addStats($newStats) {
+        list($stats, $handle) = loadStats();
+        $stats = cleanupStats($stats);
+        $stats = array_merge($stats, $newStats);
+        saveStats($stats, $handle);
     }
 
     function cleanupStats($stats) {

@@ -1,6 +1,6 @@
 <?php
     return array(
-        "DB_FILE"     => "../db.json",  // Should not be accessible from the web
+        "DB_FILE"     => "../db.json",  // Must not be accessible from the web
         "STATS_FILE"  => "../stats.json",
         "STATS_DAYS"  => 7,
         
