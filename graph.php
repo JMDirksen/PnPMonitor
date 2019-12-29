@@ -27,11 +27,19 @@
     if(!$stats) $stats = [];
 
     // Generate rows data
-    $rows = [];
-    foreach($stats as $stat) {
-        $rows[] = Array($stat[1], $stat[2]);
-    }
-    $rows = json_encode($rows);
+    $rows = "[";
+    foreach($stats as $stat)
+        if($stat[0] == $_GET['id']) {
+            $year = date("Y", $stat[1]);
+            $month = date("n", $stat[1])-1;
+            $day = date("j", $stat[1]);
+            $hours = date("G", $stat[1]);
+            $minutes = date("i", $stat[1]);
+            $seconds = date("s", $stat[1]);
+            $datetime = "new Date($year,$month,$day,$hours,$minutes,$seconds)";
+            $rows .= "[$datetime,$stat[2]],";
+        }
+    $rows .= "]";
 ?>
 
 <html>
@@ -42,12 +50,23 @@
             google.charts.setOnLoadCallback(drawChart);
             function drawChart() {
                 var data = new google.visualization.DataTable();
-                data.addColumn('number', 'Topping');
-                data.addColumn('number', 'Slices');
+                data.addColumn('datetime', 'Time');
+                data.addColumn('number', 'Response time (ms)');
                 data.addRows(<?php echo $rows; ?>);
+                var options = {
+                    legend: 'none',
+                    title: '',
+                    width: 500,
+                    height: 250,
+                    hAxis: {
+                        format: 'dd H:mm',
+                    }
+                };
+                var dtformat = new google.visualization.DateFormat({pattern: "yyyy-MM-dd H:mm"});
+                dtformat.format(data, 0);
                 var chart = new google.visualization.LineChart(
                     document.getElementById('chart_div'));
-                chart.draw(data, {width: 400, height: 240});
+                chart.draw(data, options);
             }
         </script>
     </head>
