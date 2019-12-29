@@ -10,22 +10,20 @@
     if(!isset($_GET['id'])) die('Missing monitor id.');
 
     // Load required files
+    require_once("functions.php");
     $config = require_once('config.php');
 
     $statsFile = $config['STATS_FILE'];
 
     // Load stats
-    $handle = fopen($statsFile, "c+");
-    if(!$handle) die("Unable to open stats");
-    if(!flock($handle, LOCK_EX)) die("Unable to lock stats");
-    $contents = "";
-    if(filesize($statsFile)) {
-        $contents = fread($handle, filesize($statsFile));
-        if($contents === false) die("Unable to read stats");
-    }
-    $stats = json_decode($contents);
-    if(!$stats) $stats = [];
+    $stats = loadStats(false);
 
+    // Load db
+    $db = loadDb(false);
+    $monitor = getMonitor($_GET['id']);
+    if($monitor->type == 'page') $title = "$monitor->name ($monitor->url with \"$monitor->text\")";
+    if($monitor->type == 'port') $title = "$monitor->name ($monitor->host:$monitor->port)";
+    
     // Generate rows data
     $rows = "[";
     foreach($stats as $stat)
@@ -57,9 +55,9 @@
                     backgroundColor: { fill:'transparent' },
                     colors: ['SeaGreen'],
                     legend: 'none',
-                    title: '',
-                    width: 500,
-                    height: 250,
+                    title: '<?php echo $title; ?>',
+                    width: 1000,
+                    height: 500,
                     hAxis: { format: 'dd H:mm' }
                 };
                 var dtformat = new google.visualization.DateFormat({pattern: "yyyy-MM-dd H:mm"});

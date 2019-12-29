@@ -1,10 +1,10 @@
 <?php
-    function loadDb() {
+    function loadDb($lockfile = true) {
         global $config;
         $dbFile = $config['DB_FILE'];
         $handle = fopen($dbFile, "c+");
         if(!$handle) die("Unable to open db");
-        if(!flock($handle, LOCK_EX)) die("Unable to lock db");
+        if($lockfile && !flock($handle, LOCK_EX)) die("Unable to lock db");
         $contents = "";
         if(filesize($dbFile)) {
             $contents = fread($handle, filesize($dbFile));
@@ -16,7 +16,8 @@
         if(!isset($db->monitors)) $db->monitors = [];
         if(!isset($db->sendMailAtXFails)) $db->sendMailAtXFails = 3;
         if(!isset($db->sendMailAtXSuccesses)) $db->sendMailAtXSuccesses = 2;
-        return array($db, $handle);
+        if($lockfile) return array($db, $handle);
+        else return $db;
     }
 
     function saveDb() {
@@ -247,12 +248,12 @@
         redirect($redirect);
     }
 
-    function loadStats() {
+    function loadStats($lockfile = true) {
         global $config;
         $statsFile = $config['STATS_FILE'];
         $handle = fopen($statsFile, "c+");
         if(!$handle) die("Unable to open stats");
-        if(!flock($handle, LOCK_EX)) die("Unable to lock stats");
+        if($lockfile && !flock($handle, LOCK_EX)) die("Unable to lock stats");
         $contents = "";
         if(filesize($statsFile)) {
             $contents = fread($handle, filesize($statsFile));
@@ -260,7 +261,8 @@
         }
         $stats = json_decode($contents);
         if(!$stats) $stats = [];
-        return Array($stats, $handle);
+        if($lockfile) return Array($stats, $handle);
+        else return $stats;
     }
 
     function saveStats($stats, $handle) {

@@ -11,7 +11,7 @@ require_once("functions.php");
 $config = require_once('config.php');
 
 // Load database
-list($db, $dbhandle) = loadDb();
+$db = loadDb(false);
 
 // Header
 echo '<html><head>';
