@@ -42,6 +42,7 @@
 
 <html>
     <head>
+        <title>Graph - <?php echo $monitor->name; ?></title>
         <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
         <script type="text/javascript">
             google.charts.load('current', {'packages':['corechart']});
@@ -68,6 +69,7 @@
             }
         </script>
         <link rel="stylesheet" href="style.css">
+        <meta http-equiv="refresh" content="300">
     </head>
     <body>
         <div id="chart_div"></div>
