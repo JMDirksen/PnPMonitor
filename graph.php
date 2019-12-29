@@ -68,6 +68,7 @@
             }
         </script>
         <link rel="stylesheet" href="style.css">
+        <meta http-equiv="refresh" content="300">
     </head>
     <body>
         <div id="chart_div"></div>
