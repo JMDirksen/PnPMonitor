@@ -37,7 +37,8 @@
             $minutes = date("i", $stat[1]);
             $seconds = date("s", $stat[1]);
             $datetime = "new Date($year,$month,$day,$hours,$minutes,$seconds)";
-            $rows .= "[$datetime,$stat[2]],";
+            $result = $stat[2] ?: 0;
+            $rows .= "[$datetime,$result],";
         }
     $rows .= "]";
 ?>
