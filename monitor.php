@@ -41,12 +41,12 @@ foreach($db->monitors as $key => $monitor) {
                     ($monitor->type=="page"?$monitor->text:$monitor->port).
                     ")\n";
     $result = testMonitor($monitor);
-    if($debug) echo "Result: ".(!$result ? "false" : $result)."\n";
+    if($debug) echo "Result: $result\n";
     $monitor->lastResult = $result;
     $monitor->lastTime = date("d-m-Y H:i:s (T)");
 
     // Process result
-    if($result === false) {
+    if($result == -1) {
         // Failure
         $monitor->successCount = 0;
         $monitor->failCount++;

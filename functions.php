@@ -62,7 +62,7 @@
                 return testPortResponseTime($monitor);
                 break;
             default:
-                return false;
+                return -1;
         }
     }
 
@@ -79,7 +79,7 @@
             fclose($connection);
             return (int)round(($time2 - $time1)*1000);
         }
-        else return false;
+        else return -1;
     }
 
     function testPageLoadTime($pageMonitor) {
@@ -91,10 +91,10 @@
             and strlen($pageMonitor->text)
             and stristr($page, $pageMonitor->text)===false
         ) {
-            return false;
+            return -1;
         }
         elseif($page) return (int)round(($time2 - $time1)*1000);
-        else return false;
+        else return -1;
     }
 
     function sendMail($subject, $body) {

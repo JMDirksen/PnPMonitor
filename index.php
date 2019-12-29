@@ -55,7 +55,7 @@ elseif(isset($_SESSION['id'])) {
           $page = $monitor->type == "page" ? true : false;
           $time = @$monitor->lastTime ?: "n/a";
           if(!isset($monitor->lastResult)) $result = "n/a";
-          elseif($monitor->lastResult === false) $result = "failure";
+          elseif($monitor->lastResult == -1) $result = "failure";
           else $result = $monitor->lastResult." ms";
           echo '<tr>';
           echo '<td>'.$monitor->name.'</td>';
