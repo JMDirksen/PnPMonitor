@@ -9,7 +9,7 @@
 <ul>
 <li><a href="">Monitors</a></li>
 <li><a href="">Settings</a></li>
-<li><a href="">Logout</a></li>
+<li class="bottom"><a href="">Logout</a></li>
 </ul>
 </body>
 </html>
