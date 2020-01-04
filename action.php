@@ -81,7 +81,7 @@ if(isset($_POST['addPage']) or isset($_POST['addPort'])) {
     $name = filter_var($_POST['name'], FILTER_SANITIZE_STRING);
     if(!$name) msg("Invalid name", true);
     if(isset($_POST['addPage'])) {
-        $url = filter_var($_POST['url'], FILTER_VALIDATE_URL, FILTER_FLAG_SCHEME_REQUIRED);
+        $url = filter_var($_POST['url'], FILTER_VALIDATE_URL);
         $text = filter_var($_POST['text'], FILTER_SANITIZE_STRING);
         if(!$url) msg("Invalid url", true);
         $monitor = pageMonitor($userid, $name, $url, $text);

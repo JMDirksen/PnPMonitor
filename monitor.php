@@ -99,4 +99,4 @@ foreach($db->monitors as $key => $monitor) {
 saveDb();
 
 // Save stats
-addStats($stats);
+if(isset($stats)) addStats($stats);

@@ -85,7 +85,11 @@
 
     function testPageLoadTime($pageMonitor) {
         $time1 = microtime(true);
-        $page = @file_get_contents($pageMonitor->url);
+        $opts = array("ssl" =>
+            array("verify_peer" => false, "verify_peer_name" => false)
+        );
+        $context = stream_context_create($opts);
+        $page = @file_get_contents($pageMonitor->url, false, $context);
         $time2 = microtime(true);
         if(
             strlen($page)
