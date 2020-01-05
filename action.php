@@ -1,16 +1,5 @@
 <?php
-
-// Init
-ini_set("display_errors", 1);
-ini_set("display_startup_errors", 1);
-error_reporting(E_ALL);
-session_start();
-
-// Load required files
-require_once("functions.php");
-$config = require_once('config.php');
-
-// Load database
+require_once('init.php');
 list($db, $dbhandle) = loadDb();
 
 // Register
@@ -71,10 +60,9 @@ if(isset($_POST['loginForm'])) {
 }
 
 // Login check
-if(!isset($_SESSION['id'])) redirect();
+loginRequired();
 $userid = $_SESSION['id'];
 // --- Must be logged in for below actions ---
-
 
 // Add monitor
 if(isset($_POST['addPage']) or isset($_POST['addPort'])) {
@@ -125,7 +113,7 @@ if(isset($_POST['deleteMonitor'])) {
 }
 
 // Logout
-if(isset($_POST['logout'])) {
+if(isset($_REQUEST['logout'])) {
     unset($_SESSION['id']);
     msg("Logged out");
 }
