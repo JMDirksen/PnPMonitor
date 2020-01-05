@@ -9,16 +9,16 @@ if(isset($_POST['registerForm'])) {
     $password = $_POST['password'];
     $password2 = $_POST['password2'];
 
-    if(!$email) msg("Invalid email", true, "?register");
+    if(!$email) message("Invalid email", true, "?register");
 
     if(strlen($password) < 5)
-        msg("Password must be at least 5 characters long", true, "?register");
+        message("Password must be at least 5 characters long", true, "?register");
 
     if($password <> $password2)
-        msg("Passwords do not match", true, "?register");
+        message("Passwords do not match", true, "?register");
 
     $user = getUser($email);
-    if($user) msg("A user with this email already exists", true, "?register");
+    if($user) message("A user with this email already exists", true, "?register");
 
     $user = (object) null;
     $user->id = newUserId();
@@ -28,33 +28,32 @@ if(isset($_POST['registerForm'])) {
     $db->users[] = $user;
     saveDb();
     sendMail("PnPMonitor email confirmation", confirmLink($user->confirm));
-    msg("An email has been sent for confirmation");
+    message("An email has been sent for confirmation");
 }
 
 // Resend confirmation code
 if(isset($_GET['resend'])) {
     $user = getUser($_SESSION['email']);
     sendMail("PnPMonitor email confirmation", confirmLink($user->confirm));
-    msg("An email has been sent for confirmation");
+    message("An email has been sent for confirmation");
 }
 
 // Confirm
 if(isset($_GET['confirm'])) {
     confirm($_GET['confirm']);
     saveDb();
-    msg("Email has been confirmed");
+    message("Email has been confirmed");
 }
 
 // Login
 if(isset($_POST['loginForm'])) {
     $email = filter_var($_POST['email'], FILTER_VALIDATE_EMAIL);
     $password = $_POST['password'];
-    $_SESSION["email"] = $email;
     $user = verifyLogin($email, $password);
-    if(!$user) msg("Incorrect username or password", true);
-    if(isset($user->confirm)) msg("Email has to be confirmed first, ".
+    if(!$user) message("Incorrect username or password", true, "?login");
+    if(isset($user->confirm)) message("Email has to be confirmed first, ".
         "find the confirmation link in your mailbox ".
-        "(<a href=\"action.php?resend\">resend</a>)");
+        "(<a href=\"action.php?resend\">resend</a>)", false, "?login");
     $_SESSION['id'] = $user->id;
     redirect();
 }
@@ -67,11 +66,11 @@ $userid = $_SESSION['id'];
 // Add monitor
 if(isset($_POST['addPage']) or isset($_POST['addPort'])) {
     $name = filter_var($_POST['name'], FILTER_SANITIZE_STRING);
-    if(!$name) msg("Invalid name", true);
+    if(!$name) message("Invalid name", true);
     if(isset($_POST['addPage'])) {
         $url = filter_var($_POST['url'], FILTER_VALIDATE_URL);
         $text = filter_var($_POST['text'], FILTER_SANITIZE_STRING);
-        if(!$url) msg("Invalid url", true);
+        if(!$url) message("Invalid url", true);
         $monitor = pageMonitor($userid, $name, $url, $text);
         unset($_SESSION['pagename']);
         unset($_SESSION['url']);
@@ -81,8 +80,8 @@ if(isset($_POST['addPage']) or isset($_POST['addPort'])) {
         $host = filter_var($_POST['host'], FILTER_VALIDATE_DOMAIN,
                            FILTER_FLAG_HOSTNAME);
         $port = filter_var($_POST['port'], FILTER_VALIDATE_INT);
-        if(!$host) msg("Invalid host", true);
-        if(!$port) msg("Invalid port", true);
+        if(!$host) message("Invalid host", true);
+        if(!$port) message("Invalid port", true);
         $monitor = portMonitor($userid, $name, $host, $port);
         unset($_SESSION['portname']);
         unset($_SESSION['host']);
@@ -96,7 +95,7 @@ if(isset($_POST['addPage']) or isset($_POST['addPort'])) {
 // Delete monitor
 if(isset($_POST['deleteMonitor'])) {
     $monitor = getMonitor($_POST['id']);
-    if($monitor->user <> $userid) msg("Not your monitor", true);
+    if($monitor->user <> $userid) message("Not your monitor", true);
     if($monitor->type == "page") {
         $_SESSION['pagename'] = $monitor->name;
         $_SESSION['url'] = $monitor->url;
@@ -113,7 +112,7 @@ if(isset($_POST['deleteMonitor'])) {
 }
 
 // Logout
-if(isset($_REQUEST['logout'])) {
-    unset($_SESSION['id']);
-    msg("Logged out");
+if(isset($_GET['logout'])) {
+    session_unset();
+    message("Logged out", false, "?login");
 }

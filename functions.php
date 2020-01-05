@@ -247,7 +247,7 @@ function redirect($url = "") {
     die();
 }
 
-function msg($message, $error = false, $redirect = "") {
+function message($message, $error = false, $redirect = "") {
     if($error) $_SESSION['error'] = $message;
     else $_SESSION['message'] = $message;
     redirect($redirect);
@@ -302,4 +302,14 @@ function deleteStats($monitorid) {
 
 function loginRequired() {
     if(!isset($_SESSION['id'])) redirect('?login');
+}
+
+function showMessage() {
+    if(isset($_SESSION['message'])) {
+        echo '<div id="message">'.$_SESSION['message'].'</div>';
+    }
+    if(isset($_SESSION['error'])) {
+        echo '<div id="error">'.$_SESSION['error'].'</div>';
+    }
+    unset($_SESSION['message'], $_SESSION['error']);
 }
