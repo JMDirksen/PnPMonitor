@@ -1,3 +1,4 @@
 /config.php
 /.vscode/
-*.json
+db.json
+stats.json
