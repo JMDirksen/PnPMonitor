@@ -9,16 +9,16 @@ if(isset($_POST['registerForm'])) {
     $password = $_POST['password'];
     $password2 = $_POST['password2'];
 
-    if(!$email) message("Invalid email", true, "?register");
+    if(!$email) message("Invalid email", true, "?p=register");
 
     if(strlen($password) < 5)
-        message("Password must be at least 5 characters long", true, "?register");
+        message("Password must be at least 5 characters long", true, "?p=register");
 
     if($password <> $password2)
-        message("Passwords do not match", true, "?register");
+        message("Passwords do not match", true, "?p=register");
 
     $user = getUser($email);
-    if($user) message("A user with this email already exists", true, "?register");
+    if($user) message("A user with this email already exists", true, "?p=register");
 
     $user = (object) null;
     $user->id = newUserId();
@@ -50,10 +50,10 @@ if(isset($_POST['loginForm'])) {
     $email = filter_var($_POST['email'], FILTER_VALIDATE_EMAIL);
     $password = $_POST['password'];
     $user = verifyLogin($email, $password);
-    if(!$user) message("Incorrect username or password", true, "?login");
+    if(!$user) message("Incorrect username or password", true, "?p=login");
     if(isset($user->confirm)) message("Email has to be confirmed first, ".
         "find the confirmation link in your mailbox ".
-        "(<a href=\"action.php?resend\">resend</a>)", false, "?login");
+        "(<a href=\"action.php?resend\">resend</a>)", false, "?p=login");
     $_SESSION['id'] = $user->id;
     redirect();
 }
@@ -114,5 +114,5 @@ if(isset($_POST['deleteMonitor'])) {
 // Logout
 if(isset($_GET['logout'])) {
     session_unset();
-    message("Logged out", false, "?login");
+    message("Logged out", false, "?p=login");
 }
