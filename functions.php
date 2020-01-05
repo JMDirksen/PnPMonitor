@@ -55,6 +55,14 @@ function addMonitor($monitor) {
     $db->monitors[] = $monitor;
 }
 
+function editMonitor($monitor) {
+    global $db;
+    foreach($db->monitors as $key => $value) {
+        if($value->id == $monitor->id)
+            $db->monitors[$key] = $monitor;
+    }
+}
+
 function testMonitor($monitor) {
     switch($monitor->type) {
         case "page":

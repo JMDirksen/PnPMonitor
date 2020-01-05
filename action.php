@@ -63,33 +63,37 @@ loginRequired();
 $userid = $_SESSION['id'];
 // --- Must be logged in for below actions ---
 
-// Add monitor
-if(isset($_POST['addPage']) or isset($_POST['addPort'])) {
+// Save monitor
+if(isset($_POST['saveMonitor'])) {
     $name = filter_var($_POST['name'], FILTER_SANITIZE_STRING);
     if(!$name) message("Invalid name", true);
-    if(isset($_POST['addPage'])) {
-        $url = filter_var($_POST['url'], FILTER_VALIDATE_URL);
-        $text = filter_var($_POST['text'], FILTER_SANITIZE_STRING);
+    if($_POST['type'] == "page") {
+        $url = filter_var($_POST['field1'], FILTER_VALIDATE_URL);
+        $text = filter_var($_POST['field2'], FILTER_SANITIZE_STRING);
         if(!$url) message("Invalid url", true);
         $monitor = pageMonitor($userid, $name, $url, $text);
-        unset($_SESSION['pagename']);
-        unset($_SESSION['url']);
-        unset($_SESSION['text']);
     }
-    else {
-        $host = filter_var($_POST['host'], FILTER_VALIDATE_DOMAIN,
+    elseif($_POST['type'] == "port") {
+        $host = filter_var($_POST['field1'], FILTER_VALIDATE_DOMAIN,
                            FILTER_FLAG_HOSTNAME);
-        $port = filter_var($_POST['port'], FILTER_VALIDATE_INT);
+        $port = filter_var($_POST['field2'], FILTER_VALIDATE_INT);
         if(!$host) message("Invalid host", true);
         if(!$port) message("Invalid port", true);
         $monitor = portMonitor($userid, $name, $host, $port);
-        unset($_SESSION['portname']);
-        unset($_SESSION['host']);
-        unset($_SESSION['port']);
     }
-    addMonitor($monitor);
+    if($_POST['id'] == "new") addMonitor($monitor);
+    else {
+        $monitor->id = $_POST['id'];
+        editMonitor($monitor);
+    }
     saveDb();
-    redirect();
+    redirect("?p=monitors");
+}
+
+// Edit monitor
+if(isset($_POST['editMonitor'])) {
+    $id = $_POST['id'];
+    redirect("?p=edit&id=$id");
 }
 
 // Delete monitor

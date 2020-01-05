@@ -51,24 +51,25 @@ form {
     margin: 15px;
 }
 
-form label {
+label {
     display: block;
     margin-top: 10px;
 }
 
-form input {
+input, select {
     font-size: large;
     width: 90%;
     display: block;
     border: none;
     border-bottom: solid 1px gray;
     height: 50px;
+    background-color: transparent;
 }
 
-form input:focus { outline: none; }
-form input:disabled { background: none; border: none; }
+input:focus, select:focus { outline: none; }
+input:disabled { background: none; border: none; }
 
-form input[type=submit] {
+input[type=submit] {
     margin-top: 25px;
     width: 50%;
     padding: 5px;
