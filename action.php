@@ -108,7 +108,7 @@ if(isset($_POST['deleteMonitor'])) {
     }
     deleteMonitor($monitor);
     saveDb();
-    redirect();
+    redirect("?p=monitors");
 }
 
 // Logout

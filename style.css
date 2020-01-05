@@ -59,18 +59,14 @@ form label {
 form input {
     font-size: large;
     width: 90%;
-}
-
-input:focus {
-    outline: none;
-}
-
-form input[type=email], input[type=password] {
     display: block;
     border: none;
     border-bottom: solid 1px gray;
     height: 50px;
 }
+
+form input:focus { outline: none; }
+form input:disabled { background: none; border: none; }
 
 form input[type=submit] {
     margin-top: 25px;
@@ -78,6 +74,7 @@ form input[type=submit] {
     padding: 5px;
     background-color: transparent;
     border: solid 1px gray;
+    height: 40px;
 }
 
 ::placeholder {
@@ -86,7 +83,6 @@ form input[type=submit] {
 
 #message, #error {
     padding: 15px;
-    padding-bottom: 0px;
     color: green;
 }
 

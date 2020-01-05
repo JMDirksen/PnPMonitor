@@ -1,4 +1,5 @@
 <div id="menu">
+<div class="menu-item"><a href="?p=monitor&new">+ New</a></div>
 <?php
 loginRequired();
 $db = loadDb(false);

@@ -12,6 +12,10 @@
             $title .= " - Monitors";
             $page = 'monitors.php';
         break;
+        case 'monitor':
+            $title .= " - Monitor";
+            $page = 'monitor.php';
+        break;
         case 'settings':
             $title .= " - Settings";
             $page = 'settings.php';
