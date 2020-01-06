@@ -35,7 +35,7 @@ else {
 <input type="submit" name="saveMonitor" value="Save">
 </form>
 <div id="menu">
-<div class="menu-item bottom"><a href="?p=monitors">Back</a></div>
+<div class="menu-item"><a href="?p=monitors">Back</a></div>
 </div>
 <script>
     function setVisibility() {

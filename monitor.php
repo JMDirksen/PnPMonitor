@@ -41,5 +41,5 @@ elseif($type == 'port') {
     onClick="return confirm('Delete monitor?');">
 </form>
 <div id="menu">
-<div class="menu-item bottom"><a href="?p=monitors">Back</a></div>
+<div class="menu-item"><a href="?p=monitors">Back</a></div>
 </div>
