@@ -1,5 +1,8 @@
+<div id="button-bar">
+    <div class="button"><a href="?p=menu">Back</a></div>
+    <div class="button"><a href="?p=edit&new"><b>+</b></a></div>
+</div>
 <div id="menu">
-<div class="menu-item"><a href="?p=edit&new">+ New</a></div>
 <?php
 loginRequired();
 $db = loadDb(false);
@@ -12,5 +15,4 @@ foreach($db->monitors as $monitor) {
     <a href="?p=monitor&id=<?php echo $id; ?>"><?php echo $name; ?></a>
 </div>
 <?php } ?>
-<div class="menu-item bottom"><a href="?p=menu">Back</a></div>
 </div>
