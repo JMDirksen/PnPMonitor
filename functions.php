@@ -309,7 +309,7 @@ function deleteStats($monitorid) {
 }
 
 function loginRequired() {
-    if(!isset($_SESSION['id'])) redirect('?login');
+    if(!isset($_SESSION['id'])) redirect('?p=login');
 }
 
 function showMessage() {
