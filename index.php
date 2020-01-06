@@ -35,7 +35,6 @@
 </head>
 <body>
 <div id="header"><?php echo $title; ?></div>
-<?php showMessage(); ?>
 <?php @include($page); ?>
 </body>
 </html>

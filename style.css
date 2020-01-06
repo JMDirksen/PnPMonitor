@@ -16,6 +16,7 @@ body {
     color: white;
     padding: 15px;
     font-weight: bold;
+    height: 48px;
 }
 
 #menu {
@@ -88,19 +89,22 @@ input[type=submit] {
     display: flex;
     justify-content: space-between;
     background-color: darkgrey;
+    height: 48px;
 }
 
 #button-bar .button {
     display: inline-block;
     border-radius: 6px;
-    margin: 5px;
+    margin: 7px 10px;
     text-align: center;
-    padding: 5px 10px;
+    padding: 0px;
     background-color: black;
     color: white;
 }
 
 #button-bar .button a {
+    display: block;
     text-decoration: none;
     color: white;
+    padding: 8px 10px;
 }

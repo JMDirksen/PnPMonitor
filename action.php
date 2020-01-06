@@ -66,19 +66,19 @@ $userid = $_SESSION['id'];
 // Save monitor
 if(isset($_POST['saveMonitor'])) {
     $name = filter_var($_POST['name'], FILTER_SANITIZE_STRING);
-    if(!$name) message("Invalid name", true);
+    if(!$name) message("Invalid name", true, "?p=edit&id=".$_POST['id']);
     if($_POST['type'] == "page") {
         $url = filter_var($_POST['field1'], FILTER_VALIDATE_URL);
         $text = filter_var($_POST['field2'], FILTER_SANITIZE_STRING);
-        if(!$url) message("Invalid url", true);
+        if(!$url) message("Invalid url", true, "?p=edit&id=".$_POST['id']);
         $monitor = pageMonitor($userid, $name, $url, $text);
     }
     elseif($_POST['type'] == "port") {
         $host = filter_var($_POST['field1'], FILTER_VALIDATE_DOMAIN,
                            FILTER_FLAG_HOSTNAME);
         $port = filter_var($_POST['field2'], FILTER_VALIDATE_INT);
-        if(!$host) message("Invalid host", true);
-        if(!$port) message("Invalid port", true);
+        if(!$host) message("Invalid host", true, "?p=edit&id=".$_POST['id']);
+        if(!$port) message("Invalid port", true, "?p=edit&id=".$_POST['id']);
         $monitor = portMonitor($userid, $name, $host, $port);
     }
     if($_POST['id'] == "new") addMonitor($monitor);
@@ -87,18 +87,12 @@ if(isset($_POST['saveMonitor'])) {
         editMonitor($monitor);
     }
     saveDb();
-    redirect("?p=monitors");
-}
-
-// Edit monitor
-if(isset($_POST['editMonitor'])) {
-    $id = $_POST['id'];
-    redirect("?p=edit&id=$id");
+    redirect("?p=monitor&id=".$_POST['id']);
 }
 
 // Delete monitor
-if(isset($_POST['deleteMonitor'])) {
-    $monitor = getMonitor($_POST['id']);
+if(isset($_GET['delete'])) {
+    $monitor = getMonitor($_GET['delete']);
     if($monitor->user <> $userid) message("Not your monitor", true);
     if($monitor->type == "page") {
         $_SESSION['pagename'] = $monitor->name;

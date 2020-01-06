@@ -1,4 +1,5 @@
 <?php loginRequired(); ?>
-<div id="menu">
-<div class="menu-item"><a href="?p=menu">Back</a></div>
+<div id="button-bar">
+    <div class="button"><a href="?p=menu">Back</a></div>
+    <div class="button"></div>
 </div>

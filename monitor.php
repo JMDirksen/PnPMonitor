@@ -2,14 +2,23 @@
 loginRequired();
 $db = loadDb(false);
 $monitorid = $_GET['id'] ?? null;
+if($monitorid == "new") redirect("?p=monitors");
 $userid = $_SESSION['id'];
 $monitor = getMonitor($monitorid);
 if($monitor->user <> $userid) message("Not your monitor", true);
 $name = $monitor->name;
 $type = $monitor->type;
 ?>
-<form method="POST" action="action.php">
-<input type="hidden" name="id" value="<?php echo $monitorid; ?>">
+<div id="button-bar">
+    <div>
+        <div class="button"><a href="?p=monitors">Back</a></div>
+    </div>
+    <div>
+        <div class="button"><a href="action.php?delete=<?php echo $monitorid; ?>" onClick="return confirm('Delete monitor?');">Delete</a></div>
+        <div class="button"><a href="?p=edit&id=<?php echo $monitorid; ?>">Edit</a></div>
+    </div>
+</div>
+<form>
 <label>Name</label>
 <input type="text" name="name" value="<?php echo $name; ?>" disabled>
 <label>Type</label>
@@ -21,7 +30,7 @@ if($type == 'page') {
     ?>
     <label>URL</label>
     <input type="text" name="url" value="<?php echo $url; ?>" disabled>
-    <label>Contains</label>
+    <label>Contains text</label>
     <input type="text" name="text" value="<?php echo $text; ?>" disabled>
     <?php
 }
@@ -36,10 +45,4 @@ elseif($type == 'port') {
     <?php
 }
 ?>
-<input type="submit" name="editMonitor" value="Edit">
-<input type="submit" name="deleteMonitor" value="Delete"
-    onClick="return confirm('Delete monitor?');">
 </form>
-<div id="menu">
-<div class="menu-item"><a href="?p=monitors">Back</a></div>
-</div>
