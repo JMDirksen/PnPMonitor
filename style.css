@@ -108,3 +108,22 @@ input[type=submit] {
     color: white;
     padding: 8px 10px;
 }
+
+#lastresult {
+    margin-top: 10px;
+    margin-left: 15px;
+}
+
+#lastresult .row {
+    font-size: small;
+}
+
+#lastresult .label {
+    display: inline-block;
+    width: 75px;
+}
+
+#graph {
+    margin-top: 15px;
+    margin-left: 15px;
+}

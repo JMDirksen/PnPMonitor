@@ -8,6 +8,10 @@ $monitor = getMonitor($monitorid);
 if($monitor->user <> $userid) message("Not your monitor", true);
 $name = $monitor->name;
 $type = $monitor->type;
+$time = @$monitor->lastTime ?: "n/a";
+if(!isset($monitor->lastResult)) $result = "n/a";
+elseif($monitor->lastResult == -1) $result = "failure";
+else $result = $monitor->lastResult." ms";
 ?>
 <div id="button-bar">
     <div>
@@ -46,3 +50,11 @@ elseif($type == 'port') {
 }
 ?>
 </form>
+<div id="lastresult">
+<div>Last result</div>
+<div class="row"><div class="label">Time:</div><span><?php echo $time; ?></span></div>
+<div class="row"><div class="label">Response:</div><span><?php echo $result; ?></span></div>
+</div>
+<div id="graph">
+<div>Graph</div>
+</div>
