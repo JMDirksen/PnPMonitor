@@ -24,6 +24,12 @@
             $title .= " - Settings";
             $page = 'settings.php';
         break;
+        case 'graph':
+            $title .= " - Graph";
+            $page = 'graph.php';
+            $monitorid = (int)$_GET['id'];
+            $large = true;
+        break;
     }
 ?>
 <html>

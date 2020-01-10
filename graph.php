@@ -7,6 +7,12 @@
     // Size
     $width = 330;
     $height = 100;
+    $link = "?p=graph&id=$monitorid";
+    if($large) {
+        $width = 490;
+        $height = 200;
+        $link = "?p=monitor&id=$monitorid";
+    }
 
     // Generate rows data
     $rows = "[";
@@ -48,4 +54,4 @@
         chart.draw(data, options);
     }
 </script>
-<div id="chart_div" onclick="window.location.href='?p=graph&id=<?php echo $monitorid; ?>';"></div>
+<div id="chart_div" onclick="window.location.href='<?php echo $link; ?>';"></div>
