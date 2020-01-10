@@ -57,4 +57,5 @@ elseif($type == 'port') {
 </div>
 <div id="graph">
 <div>Graph</div>
+<?php @include('graph.php'); ?>
 </div>
