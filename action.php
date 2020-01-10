@@ -83,7 +83,7 @@ if(isset($_POST['saveMonitor'])) {
     }
     if($_POST['id'] == "new") addMonitor($monitor);
     else {
-        $monitor->id = $_POST['id'];
+        $monitor->id = (int)$_POST['id'];
         editMonitor($monitor);
     }
     saveDb();
