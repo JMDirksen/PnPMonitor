@@ -33,7 +33,7 @@ if(isset($_POST['registerForm'])) {
 
 // Resend confirmation code
 if(isset($_GET['resend'])) {
-    $user = getUser($_SESSION['email']);
+    $user = getUser($_GET['email']);
     sendMail("PnPMonitor email confirmation", confirmLink($user->confirm));
     message("An email has been sent for confirmation");
 }
@@ -53,7 +53,7 @@ if(isset($_POST['loginForm'])) {
     if(!$user) message("Incorrect username or password", true, "?p=login");
     if(isset($user->confirm)) message("Email has to be confirmed first, ".
         "find the confirmation link in your mailbox ".
-        "(<a href=\"action.php?resend\">resend</a>)", false, "?p=login");
+        "(<a href=\"action.php?resend&email=$email\">resend</a>)", false, "?p=login");
     $_SESSION['id'] = $user->id;
     redirect();
 }

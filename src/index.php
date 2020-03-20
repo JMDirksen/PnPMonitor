@@ -8,6 +8,10 @@
             $title .= " - Login";
             $page = 'login.php';
         break;
+        case 'register':
+            $title .= " - Register";
+            $page = 'register.php';
+        break;
         case 'monitors':
             $title .= " - Monitors";
             $page = 'monitors.php';

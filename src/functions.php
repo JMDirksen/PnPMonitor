@@ -132,7 +132,7 @@ function sendMail($subject, $body) {
         $mailer->send();
     }
     catch (Exception $e) {
-        echo "Message could not be sent. Error: {$mailer->ErrorInfo}";
+        die("Message could not be sent. Error: {$mailer->ErrorInfo}");
     }
 }
 
