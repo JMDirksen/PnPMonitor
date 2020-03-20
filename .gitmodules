@@ -1,4 +1,4 @@
-[submodule "PHPMailer"]
-	path = PHPMailer
+[submodule "src/PHPMailer"]
+	path = src/PHPMailer
 	url = https://github.com/PHPMailer/PHPMailer.git
 	branch = master
