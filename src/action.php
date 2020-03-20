@@ -4,6 +4,7 @@ list($db, $dbhandle) = loadDb();
 
 // Register
 if(isset($_POST['registerForm'])) {
+    if(!$db->settings->allowRegister) message("Registration not allowed", true, "?p=login");
     $email = filter_var($_POST['email'], FILTER_VALIDATE_EMAIL);
     $_SESSION['email'] = $email;
     $password = $_POST['password'];
@@ -88,6 +89,14 @@ if(isset($_POST['saveMonitor'])) {
     }
     saveDb();
     redirect("?p=monitor&id=".$_POST['id']);
+}
+
+// Save settings
+if(isset($_POST['settingsForm'])) {
+    //die($_POST['allowRegister']);
+    $db->settings->allowRegister = isset($_POST['allowRegister']) ? true : false;
+    saveDb();
+    redirect("?p=settings");
 }
 
 // Delete monitor

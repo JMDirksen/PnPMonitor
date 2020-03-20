@@ -1,9 +1,13 @@
+<?php
+$db = loadDb(false);
+?>
 <div id="button-bar">
     <div></div>
     <div>
-        <div class="button">
-            <a href="?p=register">Register</a>
-        </div>
+        <?php
+            if($db->settings->allowRegister)
+                echo '<div class="button"><a href="?p=register">Register</a></div>';
+        ?>
         <div class="button">
             <a href="javascript:document.getElementById('loginForm').submit();">Login</a>
         </div>

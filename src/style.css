@@ -73,6 +73,10 @@ input[type=submit] {
     height: 40px;
 }
 
+input[type=checkbox] {
+    height: 25px;
+}
+
 ::placeholder {
     color: lightgray;
 }

@@ -18,6 +18,7 @@ function loadDb($lockfile = true) {
     if(!isset($db->settings)) $db->settings = (object) null;
     if(!isset($db->settings->sendMailAtXFails)) $db->settings->sendMailAtXFails = 3;
     if(!isset($db->settings->sendMailAtXSuccesses)) $db->settings->sendMailAtXSuccesses = 2;
+    if(!isset($db->settings->allowRegister)) $db->settings->allowRegister = true;
     if($lockfile) return array($db, $handle);
     else return $db;
 }
