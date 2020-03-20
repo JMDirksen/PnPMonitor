@@ -10,8 +10,8 @@ VOLUME /pnpmonitor
 WORKDIR /var/www/localhost/htdocs
 COPY src/ .
 RUN rm index.html
+RUN crontab -l | { cat; echo "*/5 * * * * /usr/bin/php /var/www/localhost/htdocs/run.php"; } | crontab -
 
 EXPOSE 80
 
-ENTRYPOINT ["/usr/sbin/httpd"]
-CMD ["-D", "FOREGROUND"]
+CMD ( crond -f -l 8 & ) && httpd -D FOREGROUND
