@@ -10,7 +10,6 @@ VOLUME /pnpmonitor
 WORKDIR /var/www/localhost/htdocs
 COPY src/ .
 RUN rm index.html
-COPY src/config.php /pnpmonitor/
 
 EXPOSE 80
 
