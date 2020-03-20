@@ -24,8 +24,8 @@ list($db, $dbhandle) = loadDb();
 // Debug
 if($debug) {
     echo "Debug: true\n";
-    echo "SendMailAt: Failures: ".$db->sendMailAtXFails." Successes: ".
-         $db->sendMailAtXSuccesses."\n\n";
+    echo "SendMailAt: Failures: ".$db->settings->sendMailAtXFails." Successes: ".
+         $db->settings->sendMailAtXSuccesses."\n\n";
 }
 
 // Iterate monitors
@@ -60,7 +60,7 @@ foreach($db->monitors as $key => $monitor) {
                 $msg = sprintf($string, $monitor->host, $monitor->port);
                 break;
         }
-        if($monitor->failCount >= $db->sendMailAtXFails && !$monitor->failing) {
+        if($monitor->failCount >= $db->settings->sendMailAtXFails && !$monitor->failing) {
             $monitor->failing = true;
             $subject = "PnPMonitor failed - $monitor->name";
             if($debug) echo "Sending mail\n";
@@ -71,7 +71,7 @@ foreach($db->monitors as $key => $monitor) {
         // Success
         $monitor->successCount++;
         $monitor->failCount = 0;
-        if($monitor->successCount >= $db->sendMailAtXSuccesses && $monitor->failing) {
+        if($monitor->successCount >= $db->settings->sendMailAtXSuccesses && $monitor->failing) {
             $monitor->failing = false;
             $subject = "PnPMonitor restored - $monitor->name";
             $body = "Monitor $monitor->name has been restored.\n";

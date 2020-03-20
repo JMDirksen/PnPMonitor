@@ -15,8 +15,9 @@ function loadDb($lockfile = true) {
     if(!$db) $db = (object) null;
     if(!isset($db->users)) $db->users = [];
     if(!isset($db->monitors)) $db->monitors = [];
-    if(!isset($db->sendMailAtXFails)) $db->sendMailAtXFails = 3;
-    if(!isset($db->sendMailAtXSuccesses)) $db->sendMailAtXSuccesses = 2;
+    if(!isset($db->settings)) $db->settings = (object) null;
+    if(!isset($db->settings->sendMailAtXFails)) $db->settings->sendMailAtXFails = 3;
+    if(!isset($db->settings->sendMailAtXSuccesses)) $db->settings->sendMailAtXSuccesses = 2;
     if($lockfile) return array($db, $handle);
     else return $db;
 }
