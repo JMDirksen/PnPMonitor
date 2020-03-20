@@ -1,7 +1,12 @@
 <div id="button-bar">
     <div></div>
-    <div class="button">
-        <a href="javascript:document.getElementById('loginForm').submit();">Login</a>
+    <div>
+        <div class="button">
+            <a href="?p=register">Register</a>
+        </div>
+        <div class="button">
+            <a href="javascript:document.getElementById('loginForm').submit();">Login</a>
+        </div>
     </div>
 </div>
 <?php showMessage(); ?>
