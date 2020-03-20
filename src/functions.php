@@ -2,7 +2,7 @@
 
 function loadDb($lockfile = true) {
     global $config;
-    $dbFile = $config['DB_FILE'];
+    $dbFile = "/pnpmonitor/db.json";
     $handle = fopen($dbFile, "c+");
     if(!$handle) die("Unable to open db");
     if($lockfile && !flock($handle, LOCK_EX)) die("Unable to lock db");
@@ -263,7 +263,7 @@ function message($message, $error = false, $redirect = "") {
 
 function loadStats($lockfile = true) {
     global $config;
-    $statsFile = $config['STATS_FILE'];
+    $statsFile = "/pnpmonitor/stats.json";
     $handle = fopen($statsFile, "c+");
     if(!$handle) die("Unable to open stats");
     if($lockfile && !flock($handle, LOCK_EX)) die("Unable to lock stats");
@@ -294,7 +294,7 @@ function addStats($newStats) {
 
 function cleanupStats($stats) {
     global $config;
-    $cleanupTime = time() - 86400 * $config["STATS_DAYS"];
+    $cleanupTime = time() - 86400 * 7;
     foreach($stats as $key => $stat)
         if($stat[1] < $cleanupTime) unset($stats[$key]);
     return array_values($stats);

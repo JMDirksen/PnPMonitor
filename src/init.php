@@ -7,4 +7,4 @@ error_reporting(E_ALL);
 session_start();
 
 require_once("functions.php");
-$config = require_once('config.php');
+$config = require_once('/pnpmonitor/config.php');
