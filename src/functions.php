@@ -270,7 +270,6 @@ function message($message, $error = false, $redirect = "") {
 }
 
 function loadStats($lockfile = true) {
-    global $config;
     $statsFile = "../stats.json";
     $handle = fopen($statsFile, "c+");
     if(!$handle) die("Unable to open stats");
@@ -301,7 +300,6 @@ function addStats($newStats) {
 }
 
 function cleanupStats($stats) {
-    global $config;
     $cleanupTime = time() - 86400 * 7;
     foreach($stats as $key => $stat)
         if($stat[1] < $cleanupTime) unset($stats[$key]);
