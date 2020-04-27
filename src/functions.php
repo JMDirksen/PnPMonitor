@@ -120,6 +120,7 @@ function testPageLoadTime($pageMonitor) {
 }
 
 function sendMail($subject, $body) {
+    global $db;
     require_once 'PHPMailer/src/Exception.php';
     require_once 'PHPMailer/src/PHPMailer.php';
     require_once 'PHPMailer/src/SMTP.php';
@@ -127,13 +128,13 @@ function sendMail($subject, $body) {
         $mailer = new PHPMailer\PHPMailer\PHPMailer(true);
         $mailer->isSMTP();
         $mailer->SMTPAuth   = true;
-        $mailer->Host       = $config['SMTP_HOST'];
-        $mailer->Username   = $config['SMTP_USER'];
-        $mailer->Password   = $config['SMTP_PASS'];
-        $mailer->SMTPSecure = $config['SMTP_SECURE'];
-        $mailer->Port       = $config['SMTP_PORT'];
-        $mailer->setFrom($config['SMTP_FROM']);
-        $mailer->addAddress($config['SMTP_TO']);
+        $mailer->Host       = $db->settings->smtpHost;
+        $mailer->Username   = $db->settings->smtpUser;
+        $mailer->Password   = $db->settings->smtpPass;
+        $mailer->SMTPSecure = $db->settings->smtpSecure;
+        $mailer->Port       = $db->settings->smtpPort;
+        $mailer->setFrom($db->settings->smtpFrom);
+        $mailer->addAddress($db->settings->smtpTo);
         $mailer->Subject = $subject;
         $mailer->Body = $body;
         $mailer->send();
