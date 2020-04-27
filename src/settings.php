@@ -13,4 +13,18 @@ $db = loadDb(false);
 <input type="hidden" name="settingsForm">
 <label>Allow register</label>
 <input type="checkbox" name="allowRegister" <?php if($db->settings->allowRegister) echo "checked" ?>>
+<label>SMTP Host</label>
+<input type="text" name="smtpHost" value="<?php echo $db->settings->smtpHost; ?>">
+<label>SMTP Secure</label>
+<input type="text" name="smtpSecure" value="<?php echo $db->settings->smtpSecure; ?>">
+<label>SMTP Port</label>
+<input type="text" name="smtpPort" value="<?php echo $db->settings->smtpPort; ?>">
+<label>SMTP User</label>
+<input type="text" name="smtpUser" value="<?php echo $db->settings->smtpUser; ?>">
+<label>SMTP Pass</label>
+<input type="password" name="smtpPass" value="<?php echo $db->settings->smtpPass; ?>">
+<label>SMTP From</label>
+<input type="email" name="smtpFrom" value="<?php echo $db->settings->smtpFrom; ?>">
+<label>SMTP To</label>
+<input type="email" name="smtpTo" value="<?php echo $db->settings->smtpTo; ?>">
 </form>

@@ -10,7 +10,6 @@ $debug = @$argv[1] == "debug" ? true : false;
 
 // Load required files
 require_once("functions.php");
-$config = require_once('config.php');
 
 // Checks
 if(php_sapi_name() != "cli")

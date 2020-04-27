@@ -7,5 +7,3 @@ error_reporting(E_ALL);
 session_start();
 
 require_once("functions.php");
-if(!file_exists('/pnpmonitor/config.php')) copy('config.php', '/pnpmonitor/config.php');
-$config = require_once('/pnpmonitor/config.php');

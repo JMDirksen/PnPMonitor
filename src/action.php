@@ -93,8 +93,14 @@ if(isset($_POST['saveMonitor'])) {
 
 // Save settings
 if(isset($_POST['settingsForm'])) {
-    //die($_POST['allowRegister']);
     $db->settings->allowRegister = isset($_POST['allowRegister']) ? true : false;
+    $db->settings->smtpHost = $_POST['smtpHost'];
+    $db->settings->smtpSecure = $_POST['smtpSecure'];
+    $db->settings->smtpPort = $_POST['smtpPort'];
+    $db->settings->smtpUser = $_POST['smtpUser'];
+    $db->settings->smtpPass = $_POST['smtpPass'];
+    $db->settings->smtpFrom = $_POST['smtpFrom'];
+    $db->settings->smtpTo = $_POST['smtpTo'];
     saveDb();
     redirect("?p=settings");
 }

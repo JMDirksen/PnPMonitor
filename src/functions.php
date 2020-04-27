@@ -1,8 +1,7 @@
 <?php
 
 function loadDb($lockfile = true) {
-    global $config;
-    $dbFile = "/pnpmonitor/db.json";
+    $dbFile = "../db.json";
     $handle = fopen($dbFile, "c+");
     if(!$handle) die("Unable to open db");
     if($lockfile && !flock($handle, LOCK_EX)) die("Unable to lock db");
@@ -19,6 +18,13 @@ function loadDb($lockfile = true) {
     if(!isset($db->settings->sendMailAtXFails)) $db->settings->sendMailAtXFails = 3;
     if(!isset($db->settings->sendMailAtXSuccesses)) $db->settings->sendMailAtXSuccesses = 2;
     if(!isset($db->settings->allowRegister)) $db->settings->allowRegister = true;
+    if(!isset($db->settings->smtpHost)) $db->settings->smtpHost = "smtp.gmail.com";
+    if(!isset($db->settings->smtpSecure)) $db->settings->smtpSecure = "tls";
+    if(!isset($db->settings->smtpPort)) $db->settings->smtpPort = 587;
+    if(!isset($db->settings->smtpUser)) $db->settings->smtpUser = "username@gmail.com";
+    if(!isset($db->settings->smtpPass)) $db->settings->smtpPass = "";
+    if(!isset($db->settings->smtpFrom)) $db->settings->smtpFrom = "username@gmail.com";
+    if(!isset($db->settings->smtpTo)) $db->settings->smtpTo = "username@gmail.com";
     if($lockfile) return array($db, $handle);
     else return $db;
 }
@@ -114,7 +120,6 @@ function testPageLoadTime($pageMonitor) {
 }
 
 function sendMail($subject, $body) {
-    global $config;
     require_once 'PHPMailer/src/Exception.php';
     require_once 'PHPMailer/src/PHPMailer.php';
     require_once 'PHPMailer/src/SMTP.php';
@@ -265,7 +270,7 @@ function message($message, $error = false, $redirect = "") {
 
 function loadStats($lockfile = true) {
     global $config;
-    $statsFile = "/pnpmonitor/stats.json";
+    $statsFile = "../stats.json";
     $handle = fopen($statsFile, "c+");
     if(!$handle) die("Unable to open stats");
     if($lockfile && !flock($handle, LOCK_EX)) die("Unable to lock stats");
