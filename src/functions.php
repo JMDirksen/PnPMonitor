@@ -12,12 +12,19 @@ function loadDb($lockfile = true) {
     }
     $db = json_decode($contents);
     if(!$db) $db = (object) null;
-    if(!isset($db->users)) $db->users = [];
+    if(!isset($db->users)) {
+        $db->users = [];
+        $user = (object) null;
+        $user->id = 1;
+        $user->email = "admin@pnpmonitor.com";
+        $user->password = password_hash("admin", PASSWORD_DEFAULT);
+        $db->users[] = $user;
+    }
     if(!isset($db->monitors)) $db->monitors = [];
     if(!isset($db->settings)) $db->settings = (object) null;
     if(!isset($db->settings->sendMailAtXFails)) $db->settings->sendMailAtXFails = 3;
     if(!isset($db->settings->sendMailAtXSuccesses)) $db->settings->sendMailAtXSuccesses = 2;
-    if(!isset($db->settings->allowRegister)) $db->settings->allowRegister = true;
+    if(!isset($db->settings->allowRegister)) $db->settings->allowRegister = false;
     if(!isset($db->settings->smtpHost)) $db->settings->smtpHost = "smtp.gmail.com";
     if(!isset($db->settings->smtpSecure)) $db->settings->smtpSecure = "tls";
     if(!isset($db->settings->smtpPort)) $db->settings->smtpPort = 587;
