@@ -1,6 +1,8 @@
 <?php
+
 loginRequired();
 $db = loadDb(false);
+
 $monitorid = $_GET['id'] ?? null;
 if($monitorid == "new") redirect("?p=monitors");
 $userid = $_SESSION['id'];
@@ -12,6 +14,22 @@ $time = @$monitor->lastTime ?: "n/a";
 if(!isset($monitor->lastResult)) $result = "n/a";
 elseif($monitor->lastResult == -1) $result = "failure";
 else $result = $monitor->lastResult." ms";
+
+// Graph data
+$stats = loadStats(false);
+$rows = "[";
+foreach($stats as $stat)
+    if($stat[0] == $_GET['id']) {
+        $year = date("Y", $stat[1]);
+        $month = date("n", $stat[1])-1;
+        $day = date("j", $stat[1]);
+        $hours = date("G", $stat[1]);
+        $minutes = date("i", $stat[1]);
+        $seconds = date("s", $stat[1]);
+        $datetime = "new Date($year,$month,$day,$hours,$minutes,$seconds)";
+        $rows .= "[$datetime,$stat[2]],";
+    }
+$rows .= "]";
 ?>
 <div id="button-bar">
     <div>
@@ -57,5 +75,30 @@ elseif($type == 'port') {
 </div>
 <div id="graph">
 <div>Graph</div>
-<?php @include('graph.php'); ?>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript">
+    google.charts.load('current', {'packages':['corechart']});
+    google.charts.setOnLoadCallback(drawChart);
+    function drawChart() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('datetime', 'Time');
+        data.addColumn('number', 'Response time (ms)');
+        data.addRows(<?php echo $rows; ?>);
+        var options = {
+            backgroundColor: { fill:'transparent' },
+            colors: ['SeaGreen'],
+            legend: 'none',
+            title: '',
+            width: 330,
+            height: 100,
+            hAxis: { format: 'dd H:mm' }
+        };
+        var dtformat = new google.visualization.DateFormat({pattern: "yyyy-MM-dd H:mm"});
+        dtformat.format(data, 0);
+        var chart = new google.visualization.LineChart(
+            document.getElementById('chart_div'));
+        chart.draw(data, options);
+    }
+</script>
+<div id="chart_div" onclick="window.location.href='?p=graph&id=<?php echo $monitorid; ?>';"></div>
 </div>

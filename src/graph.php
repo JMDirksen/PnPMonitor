@@ -2,19 +2,8 @@
     loginRequired();
     if(!$monitorid) die('Missing monitor id.');
 
+    // Graph data
     $stats = loadStats(false);
-    
-    // Size
-    $width = 330;
-    $height = 100;
-    $link = "?p=graph&id=$monitorid";
-    if($large) {
-        $width = 490;
-        $height = 200;
-        $link = "?p=monitor&id=$monitorid";
-    }
-
-    // Generate rows data
     $rows = "[";
     foreach($stats as $stat)
         if($stat[0] == $_GET['id']) {
@@ -43,8 +32,8 @@
             colors: ['SeaGreen'],
             legend: 'none',
             title: '',
-            width: <?php echo $width; ?>,
-            height: <?php echo $height; ?>,
+            width: 490,
+            height: 200,
             hAxis: { format: 'dd H:mm' }
         };
         var dtformat = new google.visualization.DateFormat({pattern: "yyyy-MM-dd H:mm"});
@@ -54,4 +43,8 @@
         chart.draw(data, options);
     }
 </script>
-<div id="chart_div" onclick="window.location.href='<?php echo $link; ?>';"></div>
+<div id="button-bar">
+    <div class="button"><a href="?p=monitor&id=<?php echo $monitorid; ?>">Back</a></div>
+    <div class="button"></div>
+</div>
+<div id="chart_div"></div>
