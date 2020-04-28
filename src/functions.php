@@ -31,7 +31,6 @@ function loadDb($lockfile = true) {
     if(!isset($db->settings->smtpUser)) $db->settings->smtpUser = "username@gmail.com";
     if(!isset($db->settings->smtpPass)) $db->settings->smtpPass = "";
     if(!isset($db->settings->smtpFrom)) $db->settings->smtpFrom = "username@gmail.com";
-    if(!isset($db->settings->smtpTo)) $db->settings->smtpTo = "username@gmail.com";
     if($lockfile) return array($db, $handle);
     else return $db;
 }
@@ -126,7 +125,7 @@ function testPageLoadTime($pageMonitor) {
     else return -1;
 }
 
-function sendMail($subject, $body) {
+function sendMail($to, $subject, $body) {
     global $db;
     require_once 'PHPMailer/src/Exception.php';
     require_once 'PHPMailer/src/PHPMailer.php';
@@ -141,7 +140,7 @@ function sendMail($subject, $body) {
         $mailer->SMTPSecure = $db->settings->smtpSecure;
         $mailer->Port       = $db->settings->smtpPort;
         $mailer->setFrom($db->settings->smtpFrom);
-        $mailer->addAddress($db->settings->smtpTo);
+        $mailer->addAddress($to);
         $mailer->Subject = $subject;
         $mailer->Body = $body;
         $mailer->send();
@@ -151,26 +150,30 @@ function sendMail($subject, $body) {
     }
 }
 
-function getUser($email) {
+function getUser($mixed = "") {
     global $db;
-    foreach($db->users as $user) {
-        if($user->email == $email) return $user;
+    // Current user
+    if(empty($mixed)) $mixed = $_SESSION['id'];
+    // User id
+    if(is_numeric($mixed)) {
+        foreach($db->users as $user) {
+            if($user->id == $mixed) return $user;
+        }
+        return false;
     }
-    return false;
+    // User email
+    else {
+        foreach($db->users as $user) {
+            if($user->email == $mixed) return $user;
+        }
+        return false;
+    }
 }
 
 function getMonitor($id) {
     global $db;
     foreach($db->monitors as $monitor) {
         if($monitor->id == $id) return $monitor;
-    }
-    return false;
-}
-
-function getUserFromToken($token) {
-    global $db;
-    foreach($db->users as $user) {
-        if($user->token == $token) return $user;
     }
     return false;
 }
@@ -253,6 +256,10 @@ function confirm($code) {
     foreach($db->users as $user) {
         if($user->confirm == $code) {
             unset($user->confirm);
+            if(isset($user->newemail)) {
+                $user->email = $user->newemail;
+                unset($user->newemail);
+            }
             updateUser($user);
         }
     }

@@ -6,7 +6,6 @@ list($db, $dbhandle) = loadDb();
 if(isset($_POST['registerForm'])) {
     if(!$db->settings->allowRegister) message("Registration not allowed", true, "?p=login");
     $email = filter_var($_POST['email'], FILTER_VALIDATE_EMAIL);
-    $_SESSION['email'] = $email;
     $password = $_POST['password'];
     $password2 = $_POST['password2'];
 
@@ -21,21 +20,22 @@ if(isset($_POST['registerForm'])) {
     $user = getUser($email);
     if($user) message("A user with this email already exists", true, "?p=register");
 
+    $newsecret = newSecret();
+    sendMail($email, "PnPMonitor email confirmation", confirmLink($newsecret));
     $user = (object) null;
     $user->id = newUserId();
     $user->email = $email;
     $user->password = password_hash($password, PASSWORD_DEFAULT);
-    $user->confirm = newSecret();
+    $user->confirm = $newsecret;
     $db->users[] = $user;
     saveDb();
-    sendMail("PnPMonitor email confirmation", confirmLink($user->confirm));
     message("An email has been sent for confirmation");
 }
 
 // Resend confirmation code
 if(isset($_GET['resend'])) {
     $user = getUser($_GET['email']);
-    sendMail("PnPMonitor email confirmation", confirmLink($user->confirm));
+    sendMail($user->email, "PnPMonitor email confirmation", confirmLink($user->confirm));
     message("An email has been sent for confirmation");
 }
 
@@ -52,7 +52,7 @@ if(isset($_POST['loginForm'])) {
     $password = $_POST['password'];
     $user = verifyLogin($email, $password);
     if(!$user) message("Incorrect username or password", true, "?p=login");
-    if(isset($user->confirm)) message("Email has to be confirmed first, ".
+    if(isset($user->confirm) && !isset($user->newemail)) message("Email has to be confirmed first, ".
         "find the confirmation link in your mailbox ".
         "(<a href=\"action.php?resend&email=$email\">resend</a>)", false, "?p=login");
     $_SESSION['id'] = $user->id;
@@ -100,9 +100,8 @@ if(isset($_POST['settingsForm'])) {
     $db->settings->smtpUser = $_POST['smtpUser'];
     $db->settings->smtpPass = $_POST['smtpPass'];
     $db->settings->smtpFrom = $_POST['smtpFrom'];
-    $db->settings->smtpTo = $_POST['smtpTo'];
     saveDb();
-    redirect("?p=settings");
+    message("Changes saved", false, "?p=settings");
 }
 
 // Delete monitor
@@ -128,4 +127,44 @@ if(isset($_GET['delete'])) {
 if(isset($_GET['logout'])) {
     session_unset();
     message("Logged out", false, "?p=login");
+}
+
+// Account
+if(isset($_POST['accountForm'])) {
+    $user = getUser();
+    $email = filter_var($_POST['email'], FILTER_VALIDATE_EMAIL);
+    $currentpassword = $_POST['currentpassword'];
+    $newpassword = $_POST['newpassword'];
+    $newpassword2 = $_POST['newpassword2'];
+
+    if(!verifyLogin($user->email, $currentpassword)) message("Incorrect password", true, "?p=account");
+    if(!$email) message("Invalid email", true, "?p=account");
+
+    // Password change
+    if(!empty($newpassword)) {
+        if(strlen($newpassword) < 5)
+            message("Password must be at least 5 characters long", true, "?p=account");
+
+        if($newpassword <> $newpassword2)
+            message("Passwords do not match", true, "?p=account");
+
+        $user->password = password_hash($newpassword, PASSWORD_DEFAULT);
+        updateUser($user);
+        saveDb();
+    }
+
+    // Email change
+    if($email <> $user->email) {
+        $test = getUser($email);
+        if($test) message("A user with this email already exists", true, "?p=account");
+        $newsecret = newSecret();
+        sendMail($email, "PnPMonitor email confirmation", confirmLink($newsecret));
+        $user->newemail = $email;
+        $user->confirm = $newsecret;
+        updateUser($user);
+        saveDb();
+        message("An email has been sent for confirmation");
+    }
+
+    message("Changes saved", false, "?p=account");
 }

@@ -11,7 +11,7 @@ $db = loadDb(false);
 <?php showMessage(); ?>
 <form id="settingsForm" method="POST" action="action.php">
 <input type="hidden" name="settingsForm">
-<label>Allow register</label>
+<label>Allow registration of new users</label>
 <input type="checkbox" name="allowRegister" <?php if($db->settings->allowRegister) echo "checked" ?>>
 <label>SMTP Host</label>
 <input type="text" name="smtpHost" value="<?php echo $db->settings->smtpHost; ?>">
@@ -25,6 +25,4 @@ $db = loadDb(false);
 <input type="password" name="smtpPass" value="<?php echo $db->settings->smtpPass; ?>">
 <label>SMTP From</label>
 <input type="email" name="smtpFrom" value="<?php echo $db->settings->smtpFrom; ?>">
-<label>SMTP To</label>
-<input type="email" name="smtpTo" value="<?php echo $db->settings->smtpTo; ?>">
 </form>

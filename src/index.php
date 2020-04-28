@@ -28,6 +28,10 @@
             $title .= " - Settings";
             $page = 'settings.php';
         break;
+        case 'account':
+            $title .= " - My account";
+            $page = 'account.php';
+        break;
         case 'graph':
             $title .= " - Graph";
             $page = 'graph.php';
