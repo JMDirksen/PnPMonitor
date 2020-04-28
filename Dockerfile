@@ -1,11 +1,9 @@
 FROM alpine:3.11
-MAINTAINER Jefta Dirksen <jeftadirksen@gmail.com>
+LABEL maintainer="Jefta Dirksen <jeftadirksen@gmail.com>"
 
 RUN apk update && apk upgrade && apk add apache2 php7 php7-apache2 php7-json php7-session php7-openssl
 
-RUN mkdir /pnpmonitor
-RUN chown apache:apache /pnpmonitor
-VOLUME /pnpmonitor
+RUN chown apache:apache /var/www/localhost
 
 WORKDIR /var/www/localhost/htdocs
 COPY src/ .

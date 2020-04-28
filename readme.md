@@ -3,10 +3,10 @@ Monitor if a webpage still loads (and optionally contains certain text) or if a 
 Sends an email when a fault is detected.
 
 # Docker run
-    docker run -d -p 80:80 -v [localpath]:/pnpmonitor jeftadirksen/pnpmonitor
+    docker run -d -p 80:80 jeftadirksen/pnpmonitor
 
 # Docker build
     git clone https://github.com/JeftaDirksen/PnPMonitor.git
     cd PnPMonitor
     docker build -t pnpmonitor .
-    docker run -d -p 80:80 -v [localpath]:/pnpmonitor pnpmonitor
+    docker run -d -p 80:80 pnpmonitor
