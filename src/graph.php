@@ -32,8 +32,8 @@
             colors: ['SeaGreen'],
             legend: 'none',
             title: '',
-            width: 490,
-            height: 200,
+            width: 520,
+            height: 220,
             hAxis: { format: 'dd H:mm' }
         };
         var dtformat = new google.visualization.DateFormat({pattern: "yyyy-MM-dd H:mm"});
