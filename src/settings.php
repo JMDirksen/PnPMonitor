@@ -22,7 +22,7 @@ $db = loadDb(false);
 <label>SMTP User</label>
 <input type="text" name="smtpUser" value="<?php echo $db->settings->smtpUser; ?>">
 <label>SMTP Pass</label>
-<input type="password" name="smtpPass" value="<?php echo $db->settings->smtpPass; ?>">
+<input type="password" name="smtpPass" value="<?php echo $db->settings->smtpPass; ?>" autocomplete="new-password">
 <label>SMTP From</label>
 <input type="email" name="smtpFrom" value="<?php echo $db->settings->smtpFrom; ?>">
 </form>
