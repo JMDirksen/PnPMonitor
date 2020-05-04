@@ -108,8 +108,9 @@ function testPortResponseTime($portMonitor) {
 
 function testPageLoadTime($pageMonitor) {
     $time1 = microtime(true);
-    $opts = array("ssl" =>
-        array("verify_peer" => false, "verify_peer_name" => false)
+    $opts = array(
+        "ssl" => array("verify_peer" => false, "verify_peer_name" => false),
+        "http" => array("ignore_errors" => true)
     );
     $context = stream_context_create($opts);
     $page = @file_get_contents($pageMonitor->url, false, $context);
