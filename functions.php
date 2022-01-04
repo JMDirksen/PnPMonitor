@@ -193,7 +193,7 @@ function newSecret($length = 5) {
 }
 
 function confirmLink($secret) {
-    $protocol = ($_SERVER['HTTPS']=="on") ? "https://" : "http://";
+    $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']=="on") ? "https://" : "http://";
     $host = $_SERVER['HTTP_HOST'];
     return $protocol.$host."/action.php?confirm=".$secret;
 }
