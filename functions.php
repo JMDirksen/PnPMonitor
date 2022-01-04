@@ -186,7 +186,7 @@ function newSecret($length = 5) {
                 "0123456789";
     for($i = 0; $i < $length; $i++) {
         $rnd = rand(0,strlen($chars)-1);
-        $char = $chars{$rnd};
+        $char = $chars[$rnd];
         $token .= $char;
     }
     return $token;
