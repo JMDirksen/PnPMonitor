@@ -7,7 +7,6 @@
 loginRequired();
 $db = loadDb(false);
 foreach($db->monitors as $monitor) {
-    if($monitor->user <> $_SESSION['id']) continue;
     $id = $monitor->id;
     $name = $monitor->name;
 ?>

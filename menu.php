@@ -7,5 +7,5 @@
 <div id="menu">
 <div class="menu-item"><a href="?p=monitors">Monitors</a></div>
 <div class="menu-item"><a href="?p=settings">Settings</a></div>
-<div class="menu-item"><a href="?p=account">My account</a></div>
+<div class="menu-item"><a href="?p=users">Users</a></div>
 </div>

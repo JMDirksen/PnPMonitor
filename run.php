@@ -63,7 +63,7 @@ foreach($db->monitors as $key => $monitor) {
             $monitor->failing = true;
             $subject = "PnPMonitor failed - $monitor->name";
             if($debug) echo "Sending mail\n";
-            sendMail(getUser($monitor->user)->email, $subject, $msg);
+            sendMail($db->settings->notify, $subject, $msg);
         }
     }
     else {
@@ -75,7 +75,7 @@ foreach($db->monitors as $key => $monitor) {
             $subject = "PnPMonitor restored - $monitor->name";
             $body = "Monitor $monitor->name has been restored.\n";
             if($debug) echo "Sending mail\n";
-            sendMail(getUser($monitor->user)->email, $subject, $body);
+            sendMail($db->settings->notify, $subject, $body);
         }
     }
 

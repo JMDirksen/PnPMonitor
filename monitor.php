@@ -5,9 +5,7 @@ $db = loadDb(false);
 
 $monitorid = $_GET['id'] ?? null;
 if($monitorid == "new") redirect("?p=monitors");
-$userid = $_SESSION['id'];
 $monitor = getMonitor($monitorid);
-if($monitor->user <> $userid) message("Not your monitor", true);
 $name = $monitor->name;
 $type = $monitor->type;
 $time = @$monitor->lastTime ?: "n/a";

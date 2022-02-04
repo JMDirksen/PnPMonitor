@@ -11,18 +11,18 @@ $db = loadDb(false);
 <?php showMessage(); ?>
 <form id="settingsForm" method="POST" action="action.php">
 <input type="hidden" name="settingsForm">
-<label>Allow registration of new users</label>
-<input type="checkbox" name="allowRegister" <?php if($db->settings->allowRegister) echo "checked" ?>>
+<label>Notify email address</label>
+<input type="text" name="notify" value="<?php echo $db->settings->notify; ?>">
 <label>SMTP Host</label>
 <input type="text" name="smtpHost" value="<?php echo $db->settings->smtpHost; ?>">
 <label>SMTP Secure</label>
 <input type="text" name="smtpSecure" value="<?php echo $db->settings->smtpSecure; ?>">
 <label>SMTP Port</label>
 <input type="text" name="smtpPort" value="<?php echo $db->settings->smtpPort; ?>">
-<label>SMTP User</label>
+<label>SMTP Username</label>
 <input type="text" name="smtpUser" value="<?php echo $db->settings->smtpUser; ?>">
-<label>SMTP Pass</label>
-<input type="password" name="smtpPass" value="<?php echo $db->settings->smtpPass; ?>" autocomplete="new-password">
-<label>SMTP From</label>
+<label>SMTP Password</label>
+<input type="password" name="smtpPass" value="" placeholder="hidden (enter new password to change)" autocomplete="new-password">
+<label>SMTP From email address</label>
 <input type="email" name="smtpFrom" value="<?php echo $db->settings->smtpFrom; ?>">
 </form>

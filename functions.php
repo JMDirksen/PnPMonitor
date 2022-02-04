@@ -14,17 +14,12 @@ function loadDb($lockfile = true) {
     if(!$db) $db = (object) null;
     if(!isset($db->users)) {
         $db->users = [];
-        $user = (object) null;
-        $user->id = 1;
-        $user->email = "admin@pnpmonitor.com";
-        $user->password = password_hash("admin", PASSWORD_DEFAULT);
-        $db->users[] = $user;
     }
     if(!isset($db->monitors)) $db->monitors = [];
     if(!isset($db->settings)) $db->settings = (object) null;
+    if(!isset($db->settings->notify)) $db->settings->notify = "username@gmail.com";
     if(!isset($db->settings->sendMailAtXFails)) $db->settings->sendMailAtXFails = 3;
     if(!isset($db->settings->sendMailAtXSuccesses)) $db->settings->sendMailAtXSuccesses = 2;
-    if(!isset($db->settings->allowRegister)) $db->settings->allowRegister = false;
     if(!isset($db->settings->smtpHost)) $db->settings->smtpHost = "smtp.gmail.com";
     if(!isset($db->settings->smtpSecure)) $db->settings->smtpSecure = "tls";
     if(!isset($db->settings->smtpPort)) $db->settings->smtpPort = 587;
@@ -43,23 +38,21 @@ function saveDb() {
         die("Unable to write db");
 }
 
-function pageMonitor($userid, $name, $url, $text = "") {
+function pageMonitor($name, $url, $text = "") {
     return (object) array(
         "name" => $name,
         "type" => "page",
         "url"  => $url,
         "text" => $text,
-        "user" => $userid,
     );
 }
 
-function portMonitor($userid, $name, $host, $port) {
+function portMonitor($name, $host, $port) {
     return (object) array(
         "name" => $name,
         "type" => "port",
         "host" => $host,
         "port" => $port,
-        "user" => $userid,
     );
 }
 
@@ -179,7 +172,7 @@ function getMonitor($id) {
     return false;
 }
 
-function newSecret($length = 5) {
+function newSecret($length = 25) {
     $token = "";
     $chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".
                 "abcdefghijklmnopqrstuvwxyz".
@@ -192,10 +185,19 @@ function newSecret($length = 5) {
     return $token;
 }
 
-function confirmLink($secret) {
+function loginLink($secret) {
     $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']=="on") ? "https://" : "http://";
     $host = $_SERVER['HTTP_HOST'];
-    return $protocol.$host."/action.php?confirm=".$secret;
+    return $protocol.$host."/action.php?login=".$secret;
+}
+
+function newUser($email) {
+  global $db;
+  $user = (object) null;
+  $user->id = newUserId();
+  $user->email = $email;
+  $db->users[] = $user;
+  return $user;
 }
 
 function updateUser($user) {
@@ -206,6 +208,17 @@ function updateUser($user) {
             return;
         }
     }
+}
+
+function deleteUser($user) {
+  global $db;
+  foreach($db->users as $key => $value) {
+    if($value->id == $user->id) {
+      unset($db->users[$key]);
+      $db->users = array_values($db->users);
+      return;
+    }
+  }
 }
 
 function deleteMonitor($monitor) {
@@ -239,31 +252,18 @@ function newMonitorId() {
     return $id;
 }
 
-function verifyLogin($email, $password) {
-    global $db;
-    foreach($db->users as $user) {
-        if($user->email == $email) {
-            if(password_verify($password, $user->password))
-                return $user;
-            else
-                return false;
-        }
+function login($code) {
+  global $db;
+  foreach($db->users as $user) {
+    if($user->loginCode == $code) {
+      unset($user->loginCode);
+      updateUser($user);
+      saveDb();
+      $_SESSION['id'] = $user->id;
+      return $user;
     }
-    return false;
-}
-
-function confirm($code) {
-    global $db;
-    foreach($db->users as $user) {
-        if($user->confirm == $code) {
-            unset($user->confirm);
-            if(isset($user->newemail)) {
-                $user->email = $user->newemail;
-                unset($user->newemail);
-            }
-            updateUser($user);
-        }
-    }
+  }
+  return false;
 }
 
 function thisUrl() {

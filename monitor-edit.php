@@ -10,9 +10,7 @@ if(isset($_GET['new'])) {
 else {
     $db = loadDb(false);
     $monitorid = $_GET['id'] ?? null;
-    $userid = $_SESSION['id'];
     $monitor = getMonitor($monitorid);
-    if($monitor->user <> $userid) message("Not your monitor", true);
     $name = $monitor->name;
     $type = $monitor->type;
     $field1 = $monitor->url ?? $monitor->host;
