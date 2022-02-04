@@ -11,6 +11,7 @@ if(isset($_GET['login'])) {
 
 // Request login link
 if(isset($_POST['loginForm'])) {
+    if(isset($_SESSION['id'])) redirect();
     $email = filter_var($_POST['email'], FILTER_VALIDATE_EMAIL);
     $user = getUser($email);
     if($user) {
