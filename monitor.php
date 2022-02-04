@@ -90,7 +90,8 @@ elseif($type == 'port') {
             width: 330,
             height: 100,
             hAxis: { format: 'dd H:mm' },
-            vAxis: { viewWindowMode: 'maximized' }
+            vAxis: { viewWindowMode: 'maximized' },
+            trendlines: { 0: { color: 'red', lineWidth: 1 } }
         };
         var dtformat = new google.visualization.DateFormat({pattern: "yyyy-MM-dd H:mm"});
         dtformat.format(data, 0);
