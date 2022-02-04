@@ -87,8 +87,8 @@ elseif($type == 'port') {
             colors: ['SeaGreen'],
             legend: 'none',
             title: '',
-            width: 330,
-            height: 100,
+            width: 350,
+            height: 140,
             hAxis: { format: 'dd H:mm' },
             vAxis: { viewWindowMode: 'maximized' },
             trendlines: { 0: { color: 'red', lineWidth: 1 } }

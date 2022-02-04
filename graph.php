@@ -32,8 +32,8 @@
             colors: ['SeaGreen'],
             legend: 'none',
             title: '',
-            width: 520,
-            height: 220,
+            width: 700,
+            height: 280,
             hAxis: { format: 'dd H:mm' },
             vAxis: { viewWindowMode: 'maximized' },
             trendlines: { 0: { color: 'red', lineWidth: 1 } }
