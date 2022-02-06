@@ -16,7 +16,11 @@ if(isset($_POST['loginForm'])) {
     $user = getUser($email);
     if($user) {
       $newsecret = newSecret();
-      sendMail($user->email, "PnPMonitor login link", loginLink($newsecret));
+      sendMail(
+        $user->email,
+        "PnPMonitor login link",
+        "PnPMonitor login link: \n".loginLink($newsecret)
+      );
       $user->loginCode = $newsecret;
       updateUser($user);
       saveDb();
