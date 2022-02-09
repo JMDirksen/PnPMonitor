@@ -206,12 +206,12 @@ function newSecret($length = 25)
   return $token;
 }
 
-function loginLink($secret)
+function sessionActivateLink($key, $uid)
 {
   $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == "on")
     ? "https://" : "http://";
   $host = $_SERVER['HTTP_HOST'];
-  return $protocol . $host . "/action.php?login=" . $secret;
+  return $protocol . $host . "/action.php?activate=" . $key . "&user=" . $uid;
 }
 
 function newUser($email)
@@ -220,6 +220,7 @@ function newUser($email)
   $user = (object) null;
   $user->id = newUserId();
   $user->email = $email;
+  $user->sessions = [];
   $db->users[] = $user;
   return $user;
 }
@@ -352,7 +353,7 @@ function addStats($newStats)
 
 function cleanupStats($stats)
 {
-  $cleanupTime = time()-24*60*60;
+  $cleanupTime = time() - 24 * 60 * 60;
   foreach ($stats as $key => $stat)
     if ($stat[1] < $cleanupTime) unset($stats[$key]);
   return array_values($stats);
@@ -369,7 +370,16 @@ function deleteStats($monitorid)
 
 function loginRequired()
 {
-  if (!isset($_SESSION['id'])) redirect('?p=login');
+  if (!isset($_COOKIE['session'])) redirect('?p=login');
+  global $db;
+  foreach ($db->users as $user) {
+    foreach($user->sessions as $session) {
+      if($session['active'] && $session['id']==$_COOKIE['session']) {
+        return;
+      }
+    }
+  }
+  redirect('?p=login');
 }
 
 function showMessage()

@@ -2,33 +2,50 @@
 require_once('init.php');
 list($db, $dbhandle) = loadDb();
 
-// Check login link
-if (isset($_GET['login'])) {
-  $user = login($_GET['login']);
-  if ($user) message("Logged in");
-  else message("Login link invalid", true);
+// Check session activate link
+if (isset($_GET['activate']) && isset($_GET['user'])) {
+  $user = getUser($_GET['user']);
+  if ($user) {
+    foreach ($user->sessions as $key => $session) {
+      if ($session->activate == $_GET['activate']) {
+        $session->active = true;
+        $session->expire = time() + 60 * 60 * 24 * 90;
+        unset($session->activate);
+        $user->sessions[$key] = $session;
+        updateUser($user);
+        saveDb();
+        message("Logged in", false, "?p=login");
+      }
+    }
+  }
+  message("Login link invalid", true, "?p=login");
 }
 
-// Request login link
+// Request session activate link
 if (isset($_POST['loginForm'])) {
-  if (isset($_SESSION['id'])) redirect();
   $email = filter_var($_POST['email'], FILTER_VALIDATE_EMAIL);
   $user = getUser($email);
   if ($user) {
-    $newsecret = newSecret();
+    if (!isset($user->sessions)) $user->sessions = [];
+    $session = (object) null;
+    $session->id = newSecret();
+    $session->active = false;
+    $session->activate = newSecret();
+    $session->expire = time() + 600;
+    $user->sessions[] = $session;
+    updateUser($user);
+    saveDb();
+    setcookie("session", $session->id, time() + 600);
     sendMail(
       $user->email,
       "PnPMonitor login link",
-      "PnPMonitor login link: \n" . loginLink($newsecret)
+      "PnPMonitor login link: \n" .
+        sessionActivateLink($session->activate, $user->id)
     );
-    $user->loginCode = $newsecret;
-    updateUser($user);
-    saveDb();
     message("An email with a login link has been sent");
   } elseif (!count($db->users)) {
     $user = newUser($email);
     saveDb();
-    $_SESSION['id'] = $user->id;
     message("Welcome, please configure email settings", false, "?p=settings");
   } else message("User does not exist", true, "?p=login");
 }
