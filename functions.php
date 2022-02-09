@@ -162,11 +162,9 @@ function sendMail($to, $subject, $body)
   }
 }
 
-function getUser($mixed = "")
+function getUser($mixed)
 {
   global $db;
-  // Current user
-  if (empty($mixed)) $mixed = $_SESSION['id'];
   // User id
   if (is_numeric($mixed)) {
     foreach ($db->users as $user) {
@@ -282,21 +280,6 @@ function newMonitorId()
   return $id;
 }
 
-function login($code)
-{
-  global $db;
-  foreach ($db->users as $user) {
-    if ($user->loginCode == $code) {
-      unset($user->loginCode);
-      updateUser($user);
-      saveDb();
-      $_SESSION['id'] = $user->id;
-      return $user;
-    }
-  }
-  return false;
-}
-
 function thisUrl()
 {
   $protocol = ($_SERVER['HTTPS'] == "on") ? "https://" : "http://";
@@ -309,13 +292,6 @@ function redirect($url = "")
   $location = thisUrl() . $url;
   header("Location: $location", true, 303);
   die();
-}
-
-function message($message, $error = false, $redirect = "")
-{
-  if ($error) $_SESSION['error'] = $message;
-  else $_SESSION['message'] = $message;
-  redirect($redirect);
 }
 
 function loadStats($lockfile = true)
@@ -373,22 +349,21 @@ function loginRequired()
   if (!isset($_COOKIE['session'])) redirect('?p=login');
   global $db;
   foreach ($db->users as $user) {
-    foreach($user->sessions as $session) {
-      if($session['active'] && $session['id']==$_COOKIE['session']) {
+    foreach ($user->sessions as $session) {
+      if ($session->active && $session->id == $_COOKIE['session']) {
         return;
       }
     }
   }
-  redirect('?p=login');
+  redirect('?p=login&err=Sesion error');
 }
 
 function showMessage()
 {
-  if (isset($_SESSION['message'])) {
-    echo '<div id="message">' . $_SESSION['message'] . '</div>';
+  if (isset($_GET['msg'])) {
+    echo '<div id="message">' . $_GET['msg'] . '</div>';
   }
-  if (isset($_SESSION['error'])) {
-    echo '<div id="error">' . $_SESSION['error'] . '</div>';
+  if (isset($_GET['err'])) {
+    echo '<div id="error">' . $_GET['err'] . '</div>';
   }
-  unset($_SESSION['message'], $_SESSION['error']);
 }

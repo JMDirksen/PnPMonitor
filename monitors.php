@@ -5,7 +5,6 @@
 <div id="menu">
   <?php
   loginRequired();
-  $db = loadDb(false);
   foreach ($db->monitors as $monitor) {
     $id = $monitor->id;
     $name = $monitor->name;

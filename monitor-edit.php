@@ -7,7 +7,6 @@ if (isset($_GET['new'])) {
   $field1 = "";
   $field2 = "";
 } else {
-  $db = loadDb(false);
   $monitorid = $_GET['id'] ?? null;
   $monitor = getMonitor($monitorid);
   $name = $monitor->name;

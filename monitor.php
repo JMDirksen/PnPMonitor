@@ -1,7 +1,6 @@
 <?php
 
 loginRequired();
-$db = loadDb(false);
 
 $monitorid = $_GET['id'] ?? null;
 if ($monitorid == "new") redirect("?p=monitors");

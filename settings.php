@@ -1,6 +1,5 @@
 <?php
 loginRequired();
-$db = loadDb(false);
 ?>
 <div id="button-bar">
   <div class="button"><a href="?p=menu">Back</a></div>

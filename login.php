@@ -1,6 +1,3 @@
-<?php
-if (isset($_SESSION['id'])) redirect();
-?>
 <div id="button-bar">
   <div></div>
   <div>

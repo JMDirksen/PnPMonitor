@@ -8,7 +8,6 @@
 <div id="menu">
   <?php
   loginRequired();
-  $db = loadDb(false);
   foreach ($db->users as $user) {
   ?>
     <div class="menu-item">

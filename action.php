@@ -1,6 +1,5 @@
 <?php
 require_once('init.php');
-list($db, $dbhandle) = loadDb();
 
 // Check session activate link
 if (isset($_GET['activate']) && isset($_GET['user'])) {
@@ -14,11 +13,11 @@ if (isset($_GET['activate']) && isset($_GET['user'])) {
         $user->sessions[$key] = $session;
         updateUser($user);
         saveDb();
-        message("Logged in", false, "?p=login");
+        redirect("?p=login&msg=Logged in");
       }
     }
   }
-  message("Login link invalid", true, "?p=login");
+  redirect("?p=login&err=Login link invalid");
 }
 
 // Request session activate link
@@ -42,12 +41,19 @@ if (isset($_POST['loginForm'])) {
       "PnPMonitor login link: \n" .
         sessionActivateLink($session->activate, $user->id)
     );
-    message("An email with a login link has been sent");
+    redirect("?p=login&msg=An email with a login link has been sent");
   } elseif (!count($db->users)) {
     $user = newUser($email);
+    $session = (object) null;
+    $session->active = true;
+    $session->id = newSecret();
+    $session->expire = time() + 60 * 60 * 24 * 90;
+    $user->sessions[] = $session;
+    updateUser($user);
+    setcookie("session", $session->id, $session->expire);
     saveDb();
-    message("Welcome, please configure email settings", false, "?p=settings");
-  } else message("User does not exist", true, "?p=login");
+    redirect("?p=settings&msg=Welcome, please configure email settings");
+  } else redirect("?p=login&err=User does not exist");
 }
 
 // Login check
@@ -57,11 +63,11 @@ loginRequired();
 // Save monitor
 if (isset($_POST['saveMonitor'])) {
   $name = filter_var($_POST['name'], FILTER_SANITIZE_STRING);
-  if (!$name) message("Invalid name", true, "?p=edit&id=" . $_POST['id']);
+  if (!$name) redirect("?p=edit&id=" . $_POST['id'] . "&err=Invalid name");
   if ($_POST['type'] == "page") {
     $url = filter_var($_POST['field1'], FILTER_VALIDATE_URL);
     $text = filter_var($_POST['field2'], FILTER_SANITIZE_STRING);
-    if (!$url) message("Invalid url", true, "?p=edit&id=" . $_POST['id']);
+    if (!$url) redirect("?p=edit&id=" . $_POST['id'] . "&err=Invalid url");
     $monitor = pageMonitor($name, $url, $text);
   } elseif ($_POST['type'] == "port") {
     $host = filter_var(
@@ -70,8 +76,8 @@ if (isset($_POST['saveMonitor'])) {
       FILTER_FLAG_HOSTNAME
     );
     $port = filter_var($_POST['field2'], FILTER_VALIDATE_INT);
-    if (!$host) message("Invalid host", true, "?p=edit&id=" . $_POST['id']);
-    if (!$port) message("Invalid port", true, "?p=edit&id=" . $_POST['id']);
+    if (!$host) redirect("?p=edit&id=" . $_POST['id'] . "&err=Invalid host");
+    if (!$port) redirect("?p=edit&id=" . $_POST['id'] . "&err=Invalid port");
     $monitor = portMonitor($name, $host, $port);
   }
   if ($_POST['id'] == "new") addMonitor($monitor);
@@ -93,21 +99,12 @@ if (isset($_POST['settingsForm'])) {
   if (!empty($_POST['smtpPass'])) $db->settings->smtpPass = $_POST['smtpPass'];
   $db->settings->smtpFrom = $_POST['smtpFrom'];
   saveDb();
-  message("Changes saved", false, "?p=settings");
+  redirect("?p=settings&msg=Changes saved");
 }
 
 // Delete monitor
 if (isset($_GET['delete'])) {
   $monitor = getMonitor($_GET['delete']);
-  if ($monitor->type == "page") {
-    $_SESSION['pagename'] = $monitor->name;
-    $_SESSION['url'] = $monitor->url;
-    $_SESSION['text'] = $monitor->text;
-  } else {
-    $_SESSION['portname'] = $monitor->name;
-    $_SESSION['host'] = $monitor->host;
-    $_SESSION['port'] = $monitor->port;
-  }
   deleteMonitor($monitor);
   saveDb();
   redirect("?p=monitors");
@@ -116,30 +113,26 @@ if (isset($_GET['delete'])) {
 // New user
 if (isset($_POST['newUser'])) {
   $email = filter_var($_POST['email'], FILTER_VALIDATE_EMAIL);
-  if (!$email) message("Invalid email", true, "?p=users");
+  if (!$email) redirect("?p=users&err=Invalid email");
   $test = getUser($email);
-  if ($test) message("User already exists", true, "?p=users");
+  if ($test) redirect("?p=users&err=User already exists");
   newUser($email);
   saveDb();
-  message("User added", false, "?p=users");
+  redirect("?p=users&msg=User added");
 }
 
 // Delete user
 if (isset($_GET['delUser'])) {
   if (count($db->users) == 1)
-    message(
-      "Can not delete the only user, add a new user first",
-      true,
-      "?p=users"
-    );
+    redirect("?p=users&err=Can not delete the only user, add a new user first");
   $user = getUser($_GET['delUser']);
   deleteUser($user);
   saveDb();
-  message("User $user->email deleted", false, "?p=users");
+  redirect("?p=users&msg=User $user->email deleted");
 }
 
 // Logout
 if (isset($_GET['logout'])) {
-  session_unset();
-  message("Logged out", false, "?p=login");
+  setcookie("session", null, -1);
+  redirect("?p=login&msg=Logged out");
 }
