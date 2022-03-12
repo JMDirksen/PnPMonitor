@@ -283,8 +283,7 @@ function newMonitorId()
 function thisUrl()
 {
   $protocol = ($_SERVER['HTTPS'] == "on") ? "https://" : "http://";
-  $host = $_SERVER['HTTP_HOST'];
-  return $protocol . $host . "/";
+  return $protocol . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']);
 }
 
 function redirect($url = "")
