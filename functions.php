@@ -206,10 +206,7 @@ function newSecret($length = 25)
 
 function sessionActivateLink($key, $uid)
 {
-  $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == "on")
-    ? "https://" : "http://";
-  $host = $_SERVER['HTTP_HOST'];
-  return $protocol . $host . "/action.php?activate=" . $key . "&user=" . $uid;
+  return thisUrl() . "/action.php?activate=" . $key . "&user=" . $uid;
 }
 
 function newUser($email)
