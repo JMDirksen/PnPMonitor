@@ -215,7 +215,6 @@ function newUser($email)
   $user = (object) null;
   $user->id = newUserId();
   $user->email = $email;
-  $user->sessions = [];
   $db->users[] = $user;
   return $user;
 }
@@ -342,16 +341,8 @@ function deleteStats($monitorid)
 
 function loginRequired()
 {
-  if (!isset($_COOKIE['session'])) redirect('?p=login');
-  global $db;
-  foreach ($db->users as $user) {
-    foreach ($user->sessions as $session) {
-      if ($session->active && $session->id == $_COOKIE['session']) {
-        return;
-      }
-    }
-  }
-  redirect('?p=login&err=Sesion error');
+  global $s;
+  if (!$s->get('user')) redirect('?p=login');
 }
 
 function showMessage()

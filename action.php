@@ -1,20 +1,17 @@
 <?php
 require_once('init.php');
+global $s;
 
 // Check session activate link
 if (isset($_GET['activate']) && isset($_GET['user'])) {
   $user = getUser($_GET['user']);
   if ($user) {
-    foreach ($user->sessions as $key => $session) {
-      if ($session->activate == $_GET['activate']) {
-        $session->active = true;
-        $session->expire = time() + 60 * 60 * 24 * 90;
-        unset($session->activate);
-        $user->sessions[$key] = $session;
-        updateUser($user);
-        saveDb();
-        redirect("?p=login&msg=Logged in");
-      }
+    if ($user->activate == $_GET['activate']) {
+      $s->set('user', $user->id);
+      unset($user->activate);
+      updateUser($user);
+      saveDb();
+      redirect("?p=login&msg=Logged in");
     }
   }
   redirect("?p=login&err=Login link invalid");
@@ -25,33 +22,21 @@ if (isset($_POST['loginForm'])) {
   $email = filter_var($_POST['email'], FILTER_VALIDATE_EMAIL);
   $user = getUser($email);
   if ($user) {
-    if (!isset($user->sessions)) $user->sessions = [];
-    $session = (object) null;
-    $session->id = newSecret();
-    $session->active = false;
-    $session->activate = newSecret();
-    $session->expire = time() + 600;
-    $user->sessions[] = $session;
+    $user->activate = newSecret();
     updateUser($user);
     saveDb();
-    setcookie("session", $session->id, time() + 600);
     sendMail(
       $user->email,
       "PnPMonitor login link",
       "PnPMonitor login link: \n" .
-        sessionActivateLink($session->activate, $user->id)
+        sessionActivateLink($user->activate, $user->id)
     );
     redirect("?p=login&msg=An email with a login link has been sent");
   } elseif (!count($db->users)) {
     $user = newUser($email);
-    $session = (object) null;
-    $session->active = true;
-    $session->id = newSecret();
-    $session->expire = time() + 60 * 60 * 24 * 90;
-    $user->sessions[] = $session;
     updateUser($user);
-    setcookie("session", $session->id, $session->expire);
     saveDb();
+    $s->set('user', $user->id);
     redirect("?p=settings&msg=Welcome, please configure email settings");
   } else redirect("?p=login&err=User does not exist");
 }
