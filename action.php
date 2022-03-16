@@ -118,6 +118,6 @@ if (isset($_GET['delUser'])) {
 
 // Logout
 if (isset($_GET['logout'])) {
-  setcookie("session", null, -1);
+  $s->unset('user');
   redirect("?p=login&msg=Logged out");
 }

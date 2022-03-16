@@ -30,6 +30,10 @@ class Session
     $this->contents[$key] = $value;
   }
 
+  public function unset($key) {
+    unset($this->contents[$key]);
+  }
+
   public function getAll()
   {
     return $this->contents;
