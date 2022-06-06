@@ -2,7 +2,7 @@
 
 function loadDb($lockfile = true)
 {
-  $dbFile = "../db.json";
+  $dbFile = "/data/db.json";
   $handle = fopen($dbFile, "c+");
   if (!$handle) die("Unable to open db");
   if ($lockfile && !flock($handle, LOCK_EX)) die("Unable to lock db");
@@ -298,7 +298,7 @@ function login($code)
 
 function thisUrl()
 {
-  $protocol = ($_SERVER['HTTPS'] == "on") ? "https://" : "http://";
+  $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == "on") ? "https://" : "http://";
   $host = $_SERVER['HTTP_HOST'];
   return $protocol . $host . "/";
 }
@@ -319,7 +319,7 @@ function message($message, $error = false, $redirect = "")
 
 function loadStats($lockfile = true)
 {
-  $statsFile = "../stats.json";
+  $statsFile = "/data/stats.json";
   $handle = fopen($statsFile, "c+");
   if (!$handle) die("Unable to open stats");
   if ($lockfile && !flock($handle, LOCK_EX)) die("Unable to lock stats");

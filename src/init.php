@@ -3,10 +3,10 @@
 ini_set("display_errors", 1);
 ini_set("display_startup_errors", 1);
 error_reporting(E_ALL);
+date_default_timezone_set(getenv('TZ'));
 
-$ssp = session_save_path() . '/pnpmonitor';
-if (!is_dir($ssp)) mkdir($ssp);
-ini_set('session.save_path', $ssp);
+ob_start();
+
 $lifetime = 60 * 60 * 24 * 90;
 ini_set('session.gc_maxlifetime', $lifetime);
 ini_set('session.cookie_lifetime', $lifetime);
