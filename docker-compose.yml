@@ -1,0 +1,8 @@
+services:
+
+  app:
+    image: jmdirksen/pnpmonitor
+    container_name: pnpmonitor
+    restart: always
+    ports:
+      - 80:80
