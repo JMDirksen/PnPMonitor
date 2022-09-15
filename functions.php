@@ -2,7 +2,7 @@
 
 function loadDb($lockfile = true)
 {
-    $dbFile = "/data/db.json";
+    $dbFile = "../db.json";
     $handle = fopen($dbFile, "c+");
     if (!$handle) die("Unable to open db");
     if ($lockfile && !flock($handle, LOCK_EX)) die("Unable to lock db");
@@ -320,7 +320,7 @@ function message($message, $error = false, $redirect = "")
 
 function loadStats($lockfile = true)
 {
-    $statsFile = "/data/stats.json";
+    $statsFile = "../stats.json";
     $handle = fopen($statsFile, "c+");
     if (!$handle) die("Unable to open stats");
     if ($lockfile && !flock($handle, LOCK_EX)) die("Unable to lock stats");

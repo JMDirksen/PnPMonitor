@@ -1,9 +1,0 @@
-services:
-
-  app:
-    build: .
-    volumes:
-      - ./src/:/var/www/html
-    restart: 'no'
-    environment:
-      DEBUG: true
