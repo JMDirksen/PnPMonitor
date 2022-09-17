@@ -111,12 +111,6 @@ $rows .= "]";
         },
         vAxis: {
           viewWindowMode: 'maximized'
-        },
-        trendlines: {
-          0: {
-            color: 'red',
-            lineWidth: 1
-          }
         }
       };
       var dtformat = new google.visualization.DateFormat({
