@@ -9,9 +9,11 @@
   foreach ($db->monitors as $monitor) {
     $id = $monitor->id;
     $name = $monitor->name;
+    $response = $monitor->lastResult;
+    $fail = $response == -1 ? "fail" : "";
   ?>
     <div class="menu-item">
-      <a href="?p=monitor&id=<?php echo $id; ?>"><?php echo $name; ?></a>
+      <a href="?p=monitor&id=<?php echo $id; ?>"><?php echo $name; ?> <span class="status <?php echo $fail; ?>"><?php echo $response; ?></span></a>
     </div>
   <?php } ?>
 </div>
