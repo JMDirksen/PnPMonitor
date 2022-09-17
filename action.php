@@ -63,7 +63,8 @@ if (isset($_POST['settingsForm'])) {
     if (!empty($_POST['smtpPass'])) $db->settings->smtpPass = $_POST['smtpPass'];
     $db->settings->smtpFrom = $_POST['smtpFrom'];
     saveDb();
-    message("Changes saved", false, "?p=settings");
+    sendMail($db->settings->notify, "PnPMonitor test email", "This is a test email.");
+    message("Changes saved, test email sent", false, "?p=settings");
 }
 
 // Delete monitor

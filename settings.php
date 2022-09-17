@@ -5,7 +5,7 @@ $db = loadDb(false);
 <div id="button-bar">
   <div class="button"><a href="?p=menu">Back</a></div>
   <div class="button">
-    <a href="javascript:document.getElementById('settingsForm').submit();">Save</a>
+    <a href="javascript:document.getElementById('settingsForm').submit();">Save & Test</a>
   </div>
 </div>
 <?php showMessage(); ?>
