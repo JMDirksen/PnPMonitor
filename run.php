@@ -39,8 +39,11 @@ foreach ($db->monitors as $key => $monitor) {
     $result = testMonitor($monitor);
     $result = min($result, 1001);
     if ($result == 1001) $result = -1;
-    echo "Result: $result\n";
+    $rAvgSamples = 3;
+    $rAvgResult = round((($rAvgSamples - 1) * $monitor->rAvgResult + $result) / $rAvgSamples);
+    echo "Result: $result (rAvg: $rAvgResult)\n";
     $monitor->lastResult = $result;
+    $monitor->rAvgResult = $rAvgResult;
     $monitor->lastTime = date("d-m-Y H:i:s (T)");
 
     // Process result
@@ -94,7 +97,7 @@ foreach ($db->monitors as $key => $monitor) {
     $stat = [];
     $stat[] = $monitor->id;
     $stat[] = time();
-    $stat[] = $result;
+    $stat[] = $rAvgResult;
     if (!isset($stats)) $stats = [];
     $stats[] = $stat;
 }
