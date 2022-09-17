@@ -26,11 +26,11 @@ loginRequired();
 
 // Save monitor
 if (isset($_POST['saveMonitor'])) {
-    $name = filter_var($_POST['name'], FILTER_SANITIZE_STRING);
+    $name = htmlentities($_POST['name']);
     if (!$name) message("Invalid name", true, "?p=edit&id=" . $_POST['id']);
     if ($_POST['type'] == "page") {
         $url = filter_var($_POST['field1'], FILTER_VALIDATE_URL);
-        $text = filter_var($_POST['field2'], FILTER_SANITIZE_STRING);
+        $text = htmlentities($_POST['field2']);
         if (!$url) message("Invalid url", true, "?p=edit&id=" . $_POST['id']);
         $monitor = pageMonitor($name, $url, $text);
     } elseif ($_POST['type'] == "port") {
