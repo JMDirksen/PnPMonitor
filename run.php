@@ -105,6 +105,7 @@ foreach ($db->monitors as $key => $monitor) {
     $stat[] = $result == -1 ? -1 : $rAvgResult;
     if (!isset($stats)) $stats = [];
     $stats[] = $stat;
+    sleep(1);
 }
 
 // Save database
