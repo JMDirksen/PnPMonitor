@@ -35,6 +35,9 @@ if (isset($_GET['new'])) {
     <option value="page" <?php if ($type == "page") echo " selected"; ?>>
       Page
     </option>
+    <option value="ping" <?php if ($type == "ping") echo " selected"; ?>>
+      Ping
+    </option>
     <option value="port" <?php if ($type == "port") echo " selected"; ?>>
       Port
     </option>
@@ -49,27 +52,26 @@ if (isset($_GET['new'])) {
     var typeSelector = document.getElementById('type');
     var type = typeSelector.options[typeSelector.selectedIndex].value;
     if (type == 'page') {
-      document.getElementById('lbl1')
-        .innerHTML = 'URL';
-      document.getElementById('input1')
-        .setAttribute("placeholder", "http(s)://");
-      document.getElementById('lbl2')
-        .innerHTML = 'Contains text';
-      document.getElementById('input2')
-        .setAttribute("placeholder", "the text the page should contain");
-      document.getElementById('input2')
-        .removeAttribute("required");
+      document.getElementById('lbl1').innerHTML = 'URL';
+      document.getElementById('input1').setAttribute('placeholder', 'http(s)://');
+      document.getElementById('lbl2').innerHTML = 'Contains text';
+      document.getElementById('lbl2').style.display = 'block';
+      document.getElementById('input2').setAttribute('placeholder', 'the text the page should contain');
+      document.getElementById('input2').removeAttribute('required');
+      document.getElementById('input2').style.display = 'block';
     } else if (type == 'port') {
-      document.getElementById('lbl1')
-        .innerHTML = 'Host';
-      document.getElementById('input1')
-        .setAttribute("placeholder", "localhost");
-      document.getElementById('lbl2')
-        .innerHTML = 'Port';
-      document.getElementById('input2')
-        .setAttribute("placeholder", "80");
-      document.getElementById('input2')
-        .setAttribute("required", "");
+      document.getElementById('lbl1').innerHTML = 'Host';
+      document.getElementById('input1').setAttribute('placeholder', 'localhost');
+      document.getElementById('lbl2').innerHTML = 'Port';
+      document.getElementById('lbl2').style.display = 'block';
+      document.getElementById('input2').setAttribute('placeholder', '80');
+      document.getElementById('input2').setAttribute('required', '');
+      document.getElementById('input2').style.display = 'block';
+    } else if (type == 'ping') {
+      document.getElementById('lbl1').innerHTML = 'Host';
+      document.getElementById('input1').setAttribute('placeholder', 'localhost');
+      document.getElementById('lbl2').style.display = 'none';
+      document.getElementById('input2').style.display = 'none';
     }
   }
   document.getElementById('type').onchange = function() {

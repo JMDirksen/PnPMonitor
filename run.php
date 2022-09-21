@@ -32,10 +32,13 @@ foreach ($db->monitors as $key => $monitor) {
     if (!isset($monitor->failCount)) $monitor->failCount = 0;
 
     // Test monitor
-    echo "Monitor: " . $monitor->name . " (" . $monitor->type . " " .
-        ($monitor->type == "page" ? $monitor->url : $monitor->host) . " " .
-        ($monitor->type == "page" ? $monitor->text : $monitor->port) .
-        ")\n";
+    printf(
+        "Monitor: %s (%s %s %s)\n",
+        $monitor->name,
+        $monitor->type,
+        $monitor->url ?? $monitor->host,
+        $monitor->text ?? $monitor->port ?? null,
+    );
     $result = testMonitor($monitor);
     $result = min($result, 1001);
     if ($result == 1001) $result = -1;
@@ -64,6 +67,10 @@ foreach ($db->monitors as $key => $monitor) {
             case "port":
                 $string = "Port %s:%d isn't accepting connections!\n";
                 $msg = sprintf($string, $monitor->host, $monitor->port);
+                break;
+            case "ping":
+                $string = "Host %s isn't responding to ping!\n";
+                $msg = sprintf($string, $monitor->host);
                 break;
         }
         if (

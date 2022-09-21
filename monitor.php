@@ -70,6 +70,12 @@ $rows .= "]";
     <label>Port</label>
     <input type="text" name="port" value="<?php echo $port; ?>" disabled>
   <?php
+  } elseif ($type == 'ping') {
+    $host = $monitor->host;
+  ?>
+    <label>Host</label>
+    <input type="text" name="host" value="<?php echo $host; ?>" disabled>
+  <?php
   }
   ?>
 </form>

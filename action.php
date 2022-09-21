@@ -43,6 +43,14 @@ if (isset($_POST['saveMonitor'])) {
         if (!$host) message("Invalid host", true, "?p=edit&id=" . $_POST['id']);
         if (!$port) message("Invalid port", true, "?p=edit&id=" . $_POST['id']);
         $monitor = portMonitor($name, $host, $port);
+    } elseif ($_POST['type'] == "ping") {
+        $host = filter_var(
+            $_POST['field1'],
+            FILTER_VALIDATE_DOMAIN,
+            FILTER_FLAG_HOSTNAME
+        );
+        if (!$host) message("Invalid host", true, "?p=edit&id=" . $_POST['id']);
+        $monitor = pingMonitor($name, $host);
     }
     if ($_POST['id'] == "new") addMonitor($monitor);
     else {
