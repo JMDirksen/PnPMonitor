@@ -131,9 +131,10 @@ function testPortResponseTime($portMonitor)
 
 function testPingResponseTime($pingMonitor)
 {
-    $socket = socket_create(AF_INET, SOCK_RAW, getprotobyname('icmp'));
+    $socket = @socket_create(AF_INET, SOCK_RAW, getprotobyname('icmp'));
+    if ($socket === false) return -1;
     socket_set_option($socket, SOL_SOCKET, SO_RCVTIMEO, array('sec' => 1, 'usec' => 0));
-    if(!@socket_connect($socket, $pingMonitor->host, 0)) return -1;
+    if (!@socket_connect($socket, $pingMonitor->host, 0)) return -1;
     $time1 = microtime(true);
     $package  = "\x08\x00\x19\x2f\x00\x00\x00\x00\x70\x69\x6e\x67";
     socket_send($socket, $package, strlen($package), 0);
