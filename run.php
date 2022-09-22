@@ -51,7 +51,7 @@ foreach ($db->monitors as $key => $monitor) {
         );
         $monitor->avg = $avg;
     }
-    echo "Result: $result (rAvg: $avg)\n";
+    echo "Result: $result (avg: $avg)\n";
     $monitor->lastResult = $result;
     $monitor->lastTime = date("d-m-Y H:i:s (T)");
 
