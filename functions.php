@@ -131,20 +131,24 @@ function testPortResponseTime($portMonitor)
 
 function testPingResponseTime($pingMonitor)
 {
-    $socket = @socket_create(AF_INET, SOCK_RAW, getprotobyname('icmp'));
-    if ($socket === false) return -1;
-    socket_set_option($socket, SOL_SOCKET, SO_RCVTIMEO, array('sec' => 1, 'usec' => 0));
-    if (!@socket_connect($socket, $pingMonitor->host, 0)) return -1;
-    $time1 = microtime(true);
-    $package  = "\x08\x00\x19\x2f\x00\x00\x00\x00\x70\x69\x6e\x67";
-    socket_send($socket, $package, strlen($package), 0);
-    if (socket_read($socket, 255)) {
-        $time2 = microtime(true);
-        socket_close($socket);
-        return (int)round(($time2 - $time1) * 1000);
-    } else {
-        socket_close($socket);
-        return -1;
+    // Linux
+    if (DIRECTORY_SEPARATOR === '/') {
+        $output = shell_exec('ping -c 1 ' . $pingMonitor->host);
+        $startsAt = strpos($output, "time=") + strlen("time=");
+        if ($startsAt === false) return -1;
+        $endsAt = strpos($output, " ms", $startsAt);
+        if ($endsAt === false) return -1;
+        return (int)round(substr($output, $startsAt, $endsAt - $startsAt));
+    }
+
+    // Windows
+    else if (DIRECTORY_SEPARATOR === '\\') {
+        $output = shell_exec('ping -n 1 ' . $pingMonitor->host);
+        $startsAt = strpos($output, "time=") + strlen("time=");
+        if ($startsAt === false) return -1;
+        $endsAt = strpos($output, "ms", $startsAt);
+        if ($endsAt === false) return -1;
+        return (int)substr($output, $startsAt, $endsAt - $startsAt);
     }
 }
 
