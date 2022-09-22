@@ -131,25 +131,21 @@ function testPortResponseTime($portMonitor)
 
 function testPingResponseTime($pingMonitor)
 {
-    // Linux
-    if (DIRECTORY_SEPARATOR === '/') {
-        $output = shell_exec('ping -c 1 ' . $pingMonitor->host);
-        $startsAt = strpos($output, "time=") + strlen("time=");
-        if ($startsAt === false) return -1;
-        $endsAt = strpos($output, " ms", $startsAt);
-        if ($endsAt === false) return -1;
-        return (int)round(substr($output, $startsAt, $endsAt - $startsAt));
-    }
+    if (getOS() == 'linux') $cmd = 'ping -c 1 ';
+    else if (getOS() == 'windows') $cmd = 'ping -n 1 ';
+    else return -1;
 
-    // Windows
-    else if (DIRECTORY_SEPARATOR === '\\') {
-        $output = shell_exec('ping -n 1 ' . $pingMonitor->host);
-        $startsAt = strpos($output, "time=") + strlen("time=");
-        if ($startsAt === false) return -1;
-        $endsAt = strpos($output, "ms", $startsAt);
-        if ($endsAt === false) return -1;
-        return (int)substr($output, $startsAt, $endsAt - $startsAt);
-    }
+    $output = shell_exec($cmd . $pingMonitor->host);
+    if (preg_match('#time(=|<)(.*) ?ms#', $output, $matches)) {
+        return (int)round($matches[2]);
+    } else return -1;
+}
+
+function getOS()
+{
+    if (DIRECTORY_SEPARATOR === '/') return 'linux';
+    else if (DIRECTORY_SEPARATOR === '\\') return 'windows';
+    else return 'unknown';
 }
 
 function testPageLoadTime($pageMonitor)
