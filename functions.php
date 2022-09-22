@@ -131,12 +131,15 @@ function testPortResponseTime($portMonitor)
 
 function testPingResponseTime($pingMonitor)
 {
-    if (getOS() == 'linux') $cmd = 'ping -c 1 ';
-    else if (getOS() == 'windows') $cmd = 'ping -n 1 ';
-    else return -1;
+    if (getOS() == 'linux') {
+        $cmd = 'ping -c 1 ' . $pingMonitor->host;
+    } else if (getOS() == 'windows') {
+        $cmd = 'ping -n 1 ' . $pingMonitor->host;
+    } else return -1;
 
-    $output = shell_exec($cmd . $pingMonitor->host);
-    if (preg_match('#time(=|<)(.*) ?ms#', $output, $matches)) {
+    $output = shell_exec($cmd);
+    $match = '#time(=|<)(.*) ?ms#';
+    if (preg_match($match, $output, $matches)) {
         return (int)round($matches[2]);
     } else return -1;
 }
