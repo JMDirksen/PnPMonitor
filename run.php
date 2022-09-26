@@ -44,7 +44,7 @@ foreach ($db->monitors as $key => $monitor) {
     if ($result == 1001) $result = -1;
     if ($result != -1) {
         if (!isset($monitor->avg)) $monitor->avg = $result;
-        $avgSamples = 3;
+        $avgSamples = 5;
         $avg = round(
             (($avgSamples - 1) * $monitor->avg + $result) / $avgSamples,
             2
