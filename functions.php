@@ -387,7 +387,7 @@ function addStats($newStats)
 
 function cleanupStats($stats)
 {
-    $cleanupTime = time() - 24 * 60 * 60;
+    $cleanupTime = time() - 2 * 24 * 60 * 60;
     foreach ($stats as $key => $stat)
         if ($stat[1] < $cleanupTime) unset($stats[$key]);
     return array_values($stats);
