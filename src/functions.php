@@ -174,9 +174,9 @@ function testPageLoadTime($pageMonitor)
 function sendMail($to, $subject, $body)
 {
     global $db;
-    require_once 'PHPMailer/src/Exception.php';
-    require_once 'PHPMailer/src/PHPMailer.php';
-    require_once 'PHPMailer/src/SMTP.php';
+    require_once '../PHPMailer/src/Exception.php';
+    require_once '../PHPMailer/src/PHPMailer.php';
+    require_once '../PHPMailer/src/SMTP.php';
     try {
         $mailer = new PHPMailer\PHPMailer\PHPMailer(true);
         $mailer->isSMTP();
